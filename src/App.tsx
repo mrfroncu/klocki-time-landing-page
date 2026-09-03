@@ -17,7 +17,7 @@ export default function App() {
     <>
       <a
         href="#mapa"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-full focus:bg-brand focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-brand-contrast"
+        className="btn-bevel btn-brand sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:px-4 focus:py-2 focus:font-display focus:text-sm focus:font-semibold"
       >
         Przejdź do treści
       </a>

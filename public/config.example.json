@@ -2,7 +2,7 @@
   "_comment": "Opcjonalny override konfiguracji w RUNTIME. Skopiuj do config.json obok index.html, aby zmienić wartości bez przebudowania. Pola puste/pominięte są ignorowane (używana jest wartość z .env).",
   "serverName": "Klocki Time",
   "serverAddress": "klocki-time.alleria.pl",
-  "serverPort": 25565,
+  "_serverPort_comment": "klocki-time.alleria.pl ma rekord SRV (LazyMC) — port zostaw pominięty/pusty, żeby zadziałało SRV; nie wpisuj tu 25565 ani portu backendu.",
   "serverTagline": "Prywatny serwer Minecraft dla znajomych.",
   "modpackName": "Klocki Time Pack",
   "modpackVersion": "",

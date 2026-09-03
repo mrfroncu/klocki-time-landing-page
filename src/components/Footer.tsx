@@ -10,7 +10,7 @@ interface FooterProps {
 export function Footer({ status, updatedAt }: FooterProps) {
   return (
     <footer className="mx-auto max-w-6xl px-4 pb-10 pt-8 sm:px-6">
-      <div className="glass flex flex-col gap-6 rounded-2xl px-6 py-6 sm:flex-row sm:items-center sm:justify-between">
+      <div className="panel flex flex-col gap-6 px-6 py-6 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-col gap-1">
           <span className="font-display text-sm font-semibold">{config.serverName}</span>
           <span className="font-mono text-xs text-fg-subtle">{connectAddress()}</span>

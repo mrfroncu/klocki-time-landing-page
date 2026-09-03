@@ -49,7 +49,7 @@ w [`.env.example`](.env.example). Najważniejsze:
 | --- | --- |
 | `VITE_SERVER_NAME` | Nazwa serwera |
 | `VITE_SERVER_ADDRESS` | Adres kopiowany po kliknięciu (host bez portu) |
-| `VITE_SERVER_PORT` | Port; pomiń jeśli `25565` |
+| `VITE_SERVER_PORT` | Zostaw puste, gdy domena ma rekord SRV (patrz niżej) |
 | `VITE_MODPACK_NAME` / `VITE_MODPACK_VERSION` | Modpack (serwer nie podaje tego przez ping) |
 | `VITE_MC_VERSION_FALLBACK` | Wersja MC gdy API nie odpowie |
 | `VITE_DISCORD_URL` | Przycisk „Dołącz po paczkę modów" |
@@ -59,6 +59,26 @@ w [`.env.example`](.env.example). Najważniejsze:
 | `VITE_MCSTATUS_API_BASE` | Baza API statusu (opc.) |
 | `VITE_STATUS_POLL_SECONDS` | Odświeżanie statusu, min. 15 (opc.) |
 | `VITE_MAP_EMBED` | `false` = nie osadzaj mapy, pokaż samą kartę z linkiem |
+
+### SRV / LazyMC — dlaczego port zostaje pusty
+
+`klocki-time.alleria.pl` ma rekord SRV: `network5.alleria.pl:60320`, gdzie stoi
+**LazyMC** (usypia backend przy bezczynności, budzi po wejściu gracza i przez
+ten czas sam odpowiada na ping z MOTD „serwer śpi"). LazyMC przekierowuje do
+właściwego serwera na innym porcie wewnętrznie — gracz nigdy się z nim nie
+łączy bezpośrednio.
+
+Dlatego `VITE_SERVER_PORT` musi być **puste**: sam adres domeny pozwala i
+klientowi Minecraft, i zapytaniu do `api.mcstatus.io` samodzielnie rozwiązać
+SRV. Wpisanie tam jakiegokolwiek portu (25565, port LazyMC, port backendu…)
+pomija SRV — gracz łączy się w złe miejsce, a status najczęściej pokaże
+offline. `src/lib/derive.ts` rozpoznaje po MOTD, że serwer śpi (a nie że jest
+offline) — działa to jednak tylko wtedy, gdy zapytanie w ogóle trafi do LazyMC.
+
+Adres w `VITE_SERVER_ADDRESS` musi też być **publicznie osiągalny** —
+`api.mcstatus.io` odpytuje serwer ze swoich maszyn w internecie, więc prywatny
+adres (np. Tailscale `100.x.x.x`) zawsze pokaże offline, niezależnie od tego,
+czy serwer faktycznie działa.
 
 ### Zmiana linków bez przebudowania (opcjonalnie)
 

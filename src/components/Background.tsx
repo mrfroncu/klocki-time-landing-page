@@ -1,66 +1,67 @@
+import { useMemo } from 'react'
 import { motion, useReducedMotion } from 'motion/react'
 
+const PARTICLE_COLORS = ['var(--color-brand)', 'var(--color-gold)', 'var(--color-fg-subtle)']
+
+interface Particle {
+  left: number
+  size: number
+  duration: number
+  delay: number
+  color: string
+}
+
+function makeParticles(count: number): Particle[] {
+  return Array.from({ length: count }, (_, i) => ({
+    left: (i / count) * 100 + (((i * 37) % 10) - 5),
+    size: 3 + ((i * 7) % 3),
+    duration: 14 + ((i * 11) % 10),
+    delay: -((i * 5) % 14),
+    color: PARTICLE_COLORS[i % PARTICLE_COLORS.length]!,
+  }))
+}
+
 /**
- * Dekoracyjne tło: miękka „aurora" z trzech rozmytych plam + delikatna siatka.
- * Nie przechwytuje zdarzeń wskaźnika, znika przy `prefers-reduced-motion`.
+ * Tło: cicha kratka pikseli + garść drobnych, wolno unoszących się
+ * kwadracików (jak cząsteczki z enchant table) zamiast rozmytych plam
+ * gradientu. Wyłącza animację przy prefers-reduced-motion.
  */
 export function Background() {
   const reduce = useReducedMotion()
+  const particles = useMemo(() => makeParticles(14), [])
 
   return (
-    <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+    <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 overflow-hidden bg-bg">
       <div
-        className="absolute inset-0 opacity-[0.5] dark:opacity-[0.35]"
+        className="pixel-grid-bg absolute inset-0 opacity-70"
         style={{
-          backgroundImage:
-            'linear-gradient(to right, color-mix(in srgb, var(--color-fg) 6%, transparent) 1px, transparent 1px), linear-gradient(to bottom, color-mix(in srgb, var(--color-fg) 6%, transparent) 1px, transparent 1px)',
-          backgroundSize: '64px 64px',
-          maskImage: 'radial-gradient(ellipse 80% 60% at 50% 0%, black 20%, transparent 75%)',
-          WebkitMaskImage:
-            'radial-gradient(ellipse 80% 60% at 50% 0%, black 20%, transparent 75%)',
+          maskImage: 'linear-gradient(to bottom, black, transparent 85%)',
+          WebkitMaskImage: 'linear-gradient(to bottom, black, transparent 85%)',
         }}
       />
 
-      <Blob
-        className="left-[-10%] top-[-15%] h-[46rem] w-[46rem]"
-        color="var(--glow-a)"
-        reduce={reduce ?? false}
-        drift={{ x: [0, 40, -20, 0], y: [0, 30, 10, 0] }}
-        duration={26}
-      />
-      <Blob
-        className="right-[-15%] top-[5%] h-[40rem] w-[40rem]"
-        color="var(--glow-b)"
-        reduce={reduce ?? false}
-        drift={{ x: [0, -30, 20, 0], y: [0, 40, -10, 0] }}
-        duration={32}
-      />
-      <Blob
-        className="bottom-[-25%] left-[20%] h-[42rem] w-[42rem]"
-        color="var(--glow-c)"
-        reduce={reduce ?? false}
-        drift={{ x: [0, 25, -35, 0], y: [0, -20, 15, 0] }}
-        duration={38}
-      />
+      {!reduce &&
+        particles.map((p, i) => (
+          <motion.span
+            key={i}
+            className="absolute bottom-0"
+            style={{
+              left: `${p.left}%`,
+              width: p.size,
+              height: p.size,
+              backgroundColor: p.color,
+              boxShadow: '0 0 0 1px var(--color-panel-outline)',
+            }}
+            initial={{ y: 0, opacity: 0 }}
+            animate={{ y: '-110vh', opacity: [0, 0.55, 0.55, 0] }}
+            transition={{
+              duration: p.duration,
+              delay: p.delay,
+              repeat: Infinity,
+              ease: 'linear',
+            }}
+          />
+        ))}
     </div>
-  )
-}
-
-interface BlobProps {
-  className?: string
-  color: string
-  reduce: boolean
-  drift: { x: number[]; y: number[] }
-  duration: number
-}
-
-function Blob({ className, color, reduce, drift, duration }: BlobProps) {
-  return (
-    <motion.div
-      className={`absolute rounded-full blur-[110px] ${className ?? ''}`}
-      style={{ background: `radial-gradient(circle at 50% 50%, ${color}, transparent 70%)` }}
-      animate={reduce ? undefined : drift}
-      transition={{ duration, repeat: Infinity, repeatType: 'mirror', ease: 'easeInOut' }}
-    />
   )
 }

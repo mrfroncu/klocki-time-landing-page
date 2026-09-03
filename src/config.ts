@@ -12,8 +12,14 @@ export interface AppConfig {
   serverName: string
   /** Adres hosta (bez portu), np. `klocki-time.alleria.pl`. */
   serverAddress: string
-  /** Port serwera Minecraft. */
-  serverPort: number
+  /**
+   * Port serwera Minecraft — `null` gdy serwer ma rekord SRV (np. LazyMC za
+   * SRV, jak `klocki-time.alleria.pl`): wtedy zarówno gracz, jak i zapytanie
+   * o status używają samej domeny, a przekierowanie na właściwy port
+   * (i ewentualne obudzenie serwera) załatwia SRV / proxy. Ustaw tylko gdy
+   * serwer NIE ma SRV i słucha na niestandardowym porcie.
+   */
+  serverPort: number | null
   /** Krótki podtytuł w sekcji hero. */
   serverTagline: string
   /** Nazwa modpacka (serwer nie wystawia jej przez ping). */
@@ -48,6 +54,14 @@ const int = (value: string | undefined, fallback: number): number => {
   return Number.isFinite(parsed) ? parsed : fallback
 }
 
+/** Jak {@link int}, ale puste/niepoprawne wejście daje `null` zamiast liczby. */
+const intOrNull = (value: string | undefined): number | null => {
+  const trimmed = value?.trim()
+  if (!trimmed) return null
+  const parsed = Number.parseInt(trimmed, 10)
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : null
+}
+
 const bool = (value: string | undefined, fallback: boolean): boolean => {
   const v = value?.trim().toLowerCase()
   if (v === 'true' || v === '1' || v === 'yes') return true
@@ -60,7 +74,7 @@ const env = import.meta.env
 const baseConfig: AppConfig = {
   serverName: str(env.VITE_SERVER_NAME, 'Klocki Time'),
   serverAddress: str(env.VITE_SERVER_ADDRESS, 'klocki-time.alleria.pl'),
-  serverPort: int(env.VITE_SERVER_PORT, 25565),
+  serverPort: intOrNull(env.VITE_SERVER_PORT),
   serverTagline: str(env.VITE_SERVER_TAGLINE, 'Prywatny serwer Minecraft dla znajomych.'),
   modpackName: str(env.VITE_MODPACK_NAME, 'Klocki Time Pack'),
   modpackVersion: str(env.VITE_MODPACK_VERSION, ''),
@@ -77,9 +91,14 @@ const baseConfig: AppConfig = {
 /** Bieżąca konfiguracja. Nadpisywana raz przez {@link loadRuntimeConfig}. */
 export let config: AppConfig = baseConfig
 
-/** Pełny adres do wpisania w kliencie Minecraft (host lub host:port). */
+/**
+ * Pełny adres do wpisania w kliencie Minecraft — i ten sam adres jest używany
+ * do zapytania o status. Bez `serverPort` zostaje sama domena, dzięki czemu
+ * zarówno klient MC, jak i api.mcstatus.io same rozwiążą rekord SRV (jeśli
+ * jest) zamiast łączyć się na sztywno podanym porcie.
+ */
 export const connectAddress = (c: AppConfig = config): string =>
-  c.serverPort && c.serverPort !== 25565 ? `${c.serverAddress}:${c.serverPort}` : c.serverAddress
+  c.serverPort ? `${c.serverAddress}:${c.serverPort}` : c.serverAddress
 
 /**
  * Pobiera opcjonalny `/config.json` i nakłada go na konfigurację z `.env`.

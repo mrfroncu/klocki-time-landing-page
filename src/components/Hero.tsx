@@ -27,7 +27,7 @@ export function Hero({ status }: HeroProps) {
   const v = reduce ? itemReduced : item
 
   return (
-    <section className="relative mx-auto flex max-w-4xl flex-col items-center px-4 pb-12 pt-10 text-center sm:px-6 sm:pb-16 sm:pt-16">
+    <section className="relative mx-auto flex max-w-4xl flex-col items-center px-4 pb-12 pt-14 text-center sm:px-6 sm:pb-16 sm:pt-20">
       <motion.div
         variants={container}
         initial="hidden"
@@ -36,25 +36,24 @@ export function Hero({ status }: HeroProps) {
       >
         <motion.span
           variants={v}
-          className="glass inline-flex items-center gap-2 rounded-full px-3.5 py-1.5 text-xs font-medium text-fg-muted"
+          className="panel-inset inline-flex items-center gap-2 px-3.5 py-1.5 text-xs font-display font-semibold tracking-wide text-fg-muted"
         >
           <SparkIcon className="h-3.5 w-3.5 text-brand" />
-          Serwer Minecraft
+          SERWER MINECRAFT
           <span className="text-fg-subtle">·</span>
-          <span className="tabular-nums text-fg">{status.version}</span>
+          {/* font-sans: cyfry w Pixelify Sans (np. "5") bywają nieczytelne — mylą się z "$". */}
+          <span className="font-sans tabular-nums text-fg">{status.version}</span>
         </motion.span>
 
         <motion.h1
           variants={v}
-          className="text-gradient text-balance text-5xl font-semibold leading-[1.05] tracking-tight sm:text-6xl md:text-7xl"
+          className="text-balance font-display text-5xl font-semibold leading-[1.15] tracking-wide text-fg sm:text-6xl md:text-7xl"
+          style={{ textShadow: '4px 4px 0 var(--color-brand-lo)' }}
         >
           {config.serverName}
         </motion.h1>
 
-        <motion.p
-          variants={v}
-          className="max-w-xl text-pretty text-base text-fg-muted sm:text-lg"
-        >
+        <motion.p variants={v} className="max-w-xl text-pretty text-base text-fg-muted sm:text-lg">
           {config.serverTagline}
         </motion.p>
 
@@ -63,9 +62,9 @@ export function Hero({ status }: HeroProps) {
         {status.motd && (
           <p
             key={status.motd}
-            className="fade-in-up max-w-lg text-pretty text-sm italic text-fg-subtle"
+            className="fade-in-up panel-inset max-w-lg text-pretty px-3 py-1.5 font-mono text-xs text-fg-subtle sm:text-sm"
           >
-            „{status.motd}"
+            » {status.motd}
           </p>
         )}
 
@@ -73,26 +72,23 @@ export function Hero({ status }: HeroProps) {
           <CopyAddress address={connectAddress()} />
         </motion.div>
 
-        <motion.div
-          variants={v}
-          className="flex flex-col items-center gap-3 pt-1 xs:flex-row"
-        >
+        <motion.div variants={v} className="flex flex-col items-center gap-3 pt-1 xs:flex-row">
           <a
             href={config.discordUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="group inline-flex items-center justify-center gap-2 rounded-full bg-brand px-6 py-3 text-sm font-semibold text-brand-contrast shadow-brand transition-transform duration-200 hover:-translate-y-0.5 active:translate-y-0"
+            className="btn-bevel btn-brand group inline-flex items-center justify-center gap-2 px-6 py-3 font-display text-sm font-semibold tracking-wide"
           >
             <DiscordIcon className="h-4.5 w-4.5" />
-            Dołącz po paczkę modów
+            DOŁĄCZ PO PACZKĘ MODÓW
             <ArrowRightIcon className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
           </a>
           <a
             href="#mapa"
-            className="glass inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold text-fg transition-transform duration-200 hover:-translate-y-0.5 active:translate-y-0"
+            className="btn-bevel btn-panel inline-flex items-center justify-center gap-2 px-6 py-3 font-display text-sm font-semibold tracking-wide"
           >
             <MapIcon className="h-4.5 w-4.5 text-brand" />
-            Zobacz mapę na żywo
+            ZOBACZ MAPĘ
           </a>
         </motion.div>
 

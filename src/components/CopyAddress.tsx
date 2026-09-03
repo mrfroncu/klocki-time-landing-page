@@ -58,7 +58,7 @@ export function CopyAddress({ address }: CopyAddressProps) {
       <button
         type="button"
         onClick={handleCopy}
-        className="group glass relative flex items-center gap-3 rounded-2xl py-3 pl-4 pr-3 text-left shadow-soft transition-transform duration-200 hover:-translate-y-0.5 active:translate-y-0"
+        className="panel-inset group flex items-center gap-3 py-3 pl-4 pr-2.5 text-left transition-transform duration-100 active:translate-y-0.5"
         aria-label={`Skopiuj adres serwera ${address}`}
       >
         <GlobeIcon className="hidden shrink-0 text-fg-subtle sm:block" />
@@ -66,19 +66,17 @@ export function CopyAddress({ address }: CopyAddressProps) {
           {address}
         </span>
         <span
-          className={`ml-1 grid h-9 w-9 shrink-0 place-items-center rounded-xl border text-fg-muted transition-colors ${
-            state === 'copied'
-              ? 'border-success/40 bg-success-soft text-success'
-              : 'border-border bg-bg-elevated/60 group-hover:text-fg'
+          className={`btn-bevel ml-1 grid h-9 w-9 shrink-0 place-items-center ${
+            state === 'copied' ? 'btn-brand' : 'btn-panel'
           }`}
         >
           <AnimatePresence mode="wait" initial={false}>
             <motion.span
               key={state === 'copied' ? 'check' : 'copy'}
-              initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.6, rotate: -20 }}
-              animate={reduce ? { opacity: 1 } : { opacity: 1, scale: 1, rotate: 0 }}
-              exit={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.6, rotate: 20 }}
-              transition={{ duration: 0.18 }}
+              initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.6 }}
+              animate={reduce ? { opacity: 1 } : { opacity: 1, scale: 1 }}
+              exit={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.6 }}
+              transition={{ duration: 0.15 }}
               className="grid place-items-center"
             >
               {state === 'copied' ? <CheckIcon /> : <CopyIcon />}
@@ -87,9 +85,9 @@ export function CopyAddress({ address }: CopyAddressProps) {
         </span>
       </button>
 
-      <span className="h-4 text-xs font-medium text-fg-subtle" aria-hidden>
+      <span className="h-4 font-display text-[11px] tracking-wide text-fg-subtle" aria-hidden>
         {state === 'copied'
-          ? 'Skopiowano!'
+          ? '✓ Skopiowano!'
           : state === 'error'
             ? 'Skopiuj ręcznie'
             : 'Kliknij, aby skopiować adres'}

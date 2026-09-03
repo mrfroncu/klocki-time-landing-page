@@ -21,17 +21,17 @@ export function ThemeToggle({ theme, cycleTheme }: ThemeController) {
     <button
       type="button"
       onClick={cycleTheme}
-      className="glass group relative grid h-10 w-10 place-items-center rounded-full text-fg-muted transition-colors hover:text-fg"
+      className="btn-bevel btn-panel relative grid h-9 w-9 shrink-0 place-items-center overflow-hidden"
       aria-label={`${LABEL[theme]} — kliknij, aby zmienić`}
       title={LABEL[theme]}
     >
       <AnimatePresence mode="wait" initial={false}>
         <motion.span
           key={theme}
-          initial={{ opacity: 0, rotate: -35, scale: 0.7 }}
-          animate={{ opacity: 1, rotate: 0, scale: 1 }}
-          exit={{ opacity: 0, rotate: 35, scale: 0.7 }}
-          transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -6 }}
+          transition={{ duration: 0.16 }}
           className="absolute inset-0 grid place-items-center"
         >
           <Icon />

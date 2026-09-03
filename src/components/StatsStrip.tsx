@@ -60,19 +60,20 @@ export function StatsStrip({ status }: StatsStripProps) {
   ]
 
   return (
-    <dl className="glass mx-auto grid w-full max-w-3xl grid-cols-2 gap-px overflow-hidden rounded-2xl shadow-soft sm:grid-cols-4">
+    <dl className="mx-auto grid w-full max-w-3xl grid-cols-2 gap-3 sm:grid-cols-4">
       {items.map((item) => {
         const Icon = item.icon
         return (
-          <div
-            key={item.key}
-            className="flex flex-col gap-1.5 bg-bg-elevated/40 px-4 py-4 text-left"
-          >
-            <dt className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-fg-subtle">
+          <div key={item.key} className="panel-inset flex flex-col gap-1.5 px-3.5 py-3.5 text-left">
+            <dt className="flex items-center gap-1.5 text-[10px] font-display font-semibold uppercase tracking-wider text-fg-subtle">
               <Icon className="h-3.5 w-3.5" />
               <span className="truncate">{item.label}</span>
             </dt>
-            <dd className={`font-display text-lg font-semibold ${item.tone}`}>{item.value}</dd>
+            {/* font-sans, nie font-display: cyfry w Pixelify Sans (np. "5") bywają
+                nieczytelne, mylą się z "$" — tu regularnie pokazujemy liczby graczy. */}
+            <dd className={`font-sans text-base font-semibold tabular-nums ${item.tone}`}>
+              {item.value}
+            </dd>
           </div>
         )
       })}

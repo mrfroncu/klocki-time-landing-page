@@ -20,18 +20,17 @@ export function Navbar({ status, theme }: NavbarProps) {
       initial={reduce ? { opacity: 0 } : { opacity: 0, y: -16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-      className="sticky top-0 z-40 w-full"
+      className="sticky top-3 z-40 w-full px-3 sm:top-4 sm:px-4"
     >
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
-        <a
-          href="#top"
-          className="glass flex items-center gap-2.5 rounded-full py-1.5 pl-1.5 pr-4 shadow-sm transition-transform hover:-translate-y-0.5"
-        >
-          <BrandMark icon={status.icon} className="h-8 w-8 rounded-full" />
-          <span className="text-sm font-semibold tracking-tight">{config.serverName}</span>
+      <div className="panel mx-auto flex max-w-6xl items-center justify-between gap-3 px-3 py-2 sm:px-4">
+        <a href="#top" className="flex min-w-0 items-center gap-2.5">
+          <BrandMark icon={status.icon} className="h-9 w-9" />
+          <span className="truncate font-display text-sm font-semibold tracking-wide text-fg">
+            {config.serverName}
+          </span>
         </a>
 
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2">
           <span className="hidden sm:block">
             <StatusPill tone={status.tone} label={status.label} />
           </span>
@@ -40,7 +39,7 @@ export function Navbar({ status, theme }: NavbarProps) {
             href={config.discordUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-full bg-brand px-4 py-2 text-sm font-semibold text-brand-contrast shadow-brand transition-transform hover:-translate-y-0.5 active:translate-y-0"
+            className="btn-bevel btn-brand inline-flex items-center gap-2 px-3 py-2 text-xs font-display font-semibold tracking-wide sm:px-4 sm:text-sm"
           >
             <DiscordIcon className="h-4 w-4" />
             <span className="hidden xs:inline">Discord</span>

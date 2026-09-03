@@ -22,18 +22,18 @@ export function StatusPill({ tone, label, className }: StatusPillProps) {
 
   return (
     <span
-      className={`glass inline-flex items-center gap-2.5 rounded-full px-3.5 py-1.5 text-sm font-medium ${className ?? ''}`}
+      className={`panel-inset inline-flex items-center gap-2.5 px-3 py-1.5 text-xs font-display font-semibold tracking-wide ${className ?? ''}`}
     >
-      <span className="relative grid h-2.5 w-2.5 place-items-center">
+      <span className="relative grid h-2 w-2 place-items-center">
         {animated && (
           <motion.span
-            className={`absolute inset-0 rounded-full ${c.ring}`}
+            className={`absolute inset-0 ${c.ring}`}
             initial={{ scale: 1, opacity: 0.7 }}
             animate={{ scale: 2.6, opacity: 0 }}
             transition={{ duration: 1.8, repeat: Infinity, ease: 'easeOut' }}
           />
         )}
-        <span className={`h-2.5 w-2.5 rounded-full ${c.dot}`} />
+        <span className={`h-2 w-2 ${c.dot}`} style={{ boxShadow: '0 0 0 1px var(--color-panel-outline)' }} />
       </span>
       <span className={c.text}>{label}</span>
     </span>

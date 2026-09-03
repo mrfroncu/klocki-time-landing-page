@@ -2,7 +2,9 @@
 
 /* ------------------------------------------------------------------ *
  * Fonty self-hosted (pliki w public/fonts/ — bez zależności od CDN).
- * Inter — tekst, Sora — nagłówki. Podzbiory latin + latin-ext (pl).
+ *   Inter          — tekst, opisy, dłuższe zdania (czytelność).
+ *   Pixelify Sans  — nagłówki, przyciski, etykiety, liczby (klimat gry).
+ * Podzbiory latin + latin-ext (polskie znaki).
  * ------------------------------------------------------------------ */
 @font-face {
   font-family: 'Inter Variable';
@@ -24,20 +26,20 @@
     U+2C60-2C7F, U+A720-A7FF;
 }
 @font-face {
-  font-family: 'Sora Variable';
+  font-family: 'Pixelify Sans Variable';
   font-style: normal;
   font-display: swap;
-  font-weight: 100 800;
-  src: url('/fonts/sora-latin-wght-normal.woff2') format('woff2-variations');
+  font-weight: 400 700;
+  src: url('/fonts/pixelify-sans-latin-wght-normal.woff2') format('woff2-variations');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304,
     U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 @font-face {
-  font-family: 'Sora Variable';
+  font-family: 'Pixelify Sans Variable';
   font-style: normal;
   font-display: swap;
-  font-weight: 100 800;
-  src: url('/fonts/sora-latin-ext-wght-normal.woff2') format('woff2-variations');
+  font-weight: 400 700;
+  src: url('/fonts/pixelify-sans-latin-ext-wght-normal.woff2') format('woff2-variations');
   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308,
     U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113,
     U+2C60-2C7F, U+A720-A7FF;
@@ -60,110 +62,121 @@
   }
 }
 
-/* Wartości palety — light jest wartością bazową. */
+/* ------------------------------------------------------------------ *
+ * Paleta — GUI gry: kamienny panel z fazowaną 3D-krawędzią (jak sloty
+ * ekwipunku/przyciski), trawiasta zieleń jako kolor akcji, bez
+ * fioletowych gradientów i szkła. Light = jasny kamień/papier,
+ * dark = głęboki bazalt/noc.
+ * ------------------------------------------------------------------ */
 :root {
-  --bg: #f6f7f9;
-  --bg-elevated: #ffffff;
-  --surface: rgb(255 255 255 / 0.72);
-  --surface-strong: rgb(255 255 255 / 0.92);
-  --border: rgb(15 23 42 / 0.08);
-  --border-strong: rgb(15 23 42 / 0.14);
+  --bg: #eef1e2;
+  --bg-elevated: #e4dfc9;
 
-  --fg: #0f1729;
-  --fg-muted: #55617a;
-  --fg-subtle: #8a94a8;
+  --panel: #c6c6c6;
+  --panel-hi: #ffffff;
+  --panel-lo: #545454;
+  --panel-outline: #272723;
 
-  --brand: #5b57f0;
-  --brand-strong: #4b46e0;
+  --ink: #2b2a1f;
+  --ink-muted: #5c5847;
+  --ink-subtle: #837e69;
+
+  --brand: #5c9e31;
+  --brand-hi: #86d454;
+  --brand-lo: #35590f;
   --brand-contrast: #ffffff;
-  --accent: #10b3d6;
 
-  --success: #10b981;
-  --success-soft: rgb(16 185 129 / 0.14);
-  --danger: #ef4444;
-  --danger-soft: rgb(239 68 68 / 0.14);
-  --warn: #f59e0b;
+  --gold: #e0a526;
+  --gold-hi: #ffd35c;
+  --gold-lo: #8a5e0f;
 
-  --glow-a: rgb(91 87 240 / 0.35);
-  --glow-b: rgb(16 179 214 / 0.28);
-  --glow-c: rgb(168 85 247 / 0.22);
+  --success: #5c9e31;
+  --success-soft: rgb(92 158 49 / 0.16);
+  --danger: #b3392b;
+  --danger-hi: #e5665a;
+  --danger-lo: #6b1c14;
+  --danger-soft: rgb(179 57 43 / 0.14);
+  --warn: var(--gold);
 
-  --shadow-sm: 0 1px 2px rgb(15 23 42 / 0.06), 0 1px 3px rgb(15 23 42 / 0.05);
-  --shadow-md: 0 4px 12px rgb(15 23 42 / 0.08), 0 2px 6px rgb(15 23 42 / 0.05);
-  --shadow-lg: 0 18px 50px -12px rgb(15 23 42 / 0.22), 0 8px 20px -8px rgb(15 23 42 / 0.12);
-  --shadow-glow: 0 0 0 1px rgb(91 87 240 / 0.14), 0 20px 60px -16px rgb(91 87 240 / 0.32);
+  --shadow-sm: 0 2px 0 0 rgb(0 0 0 / 0.18);
+  --shadow-md: 0 3px 0 0 rgb(0 0 0 / 0.22);
+  --shadow-lg: 0 5px 0 0 rgb(0 0 0 / 0.25), 0 14px 26px -12px rgb(0 0 0 / 0.35);
 
   color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    --bg: #0a0c12;
-    --bg-elevated: #12151d;
-    --surface: rgb(255 255 255 / 0.045);
-    --surface-strong: rgb(20 24 33 / 0.86);
-    --border: rgb(255 255 255 / 0.09);
-    --border-strong: rgb(255 255 255 / 0.16);
+    --bg: #14171a;
+    --bg-elevated: #1b1e1f;
 
-    --fg: #e9ebf1;
-    --fg-muted: #a2acbd;
-    --fg-subtle: #6b7688;
+    --panel: #38393a;
+    --panel-hi: #5a5b59;
+    --panel-lo: #17181a;
+    --panel-outline: #050505;
 
-    --brand: #8b88ff;
-    --brand-strong: #a5a2ff;
-    --brand-contrast: #0a0c12;
-    --accent: #38d3f0;
+    --ink: #ebe7d8;
+    --ink-muted: #aca894;
+    --ink-subtle: #6f6c5a;
 
-    --success: #34d399;
-    --success-soft: rgb(52 211 153 / 0.16);
-    --danger: #f87171;
-    --danger-soft: rgb(248 113 113 / 0.18);
-    --warn: #fbbf24;
+    --brand: #6cb83e;
+    --brand-hi: #96e065;
+    --brand-lo: #2c4c15;
+    --brand-contrast: #0d1408;
 
-    --glow-a: rgb(120 116 255 / 0.4);
-    --glow-b: rgb(56 211 240 / 0.3);
-    --glow-c: rgb(192 132 252 / 0.28);
+    --gold: #eec24c;
+    --gold-hi: #ffe08a;
+    --gold-lo: #7c5c14;
 
-    --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
-    --shadow-md: 0 6px 18px rgb(0 0 0 / 0.45);
-    --shadow-lg: 0 24px 64px -16px rgb(0 0 0 / 0.6), 0 10px 28px -10px rgb(0 0 0 / 0.45);
-    --shadow-glow: 0 0 0 1px rgb(139 136 255 / 0.22), 0 24px 70px -18px rgb(139 136 255 / 0.35);
+    --success: #6cb83e;
+    --success-soft: rgb(108 184 62 / 0.18);
+    --danger: #e2584a;
+    --danger-hi: #ff8478;
+    --danger-lo: #6b1c14;
+    --danger-soft: rgb(226 88 74 / 0.18);
+    --warn: var(--gold);
+
+    --shadow-sm: 0 2px 0 0 rgb(0 0 0 / 0.5);
+    --shadow-md: 0 3px 0 0 rgb(0 0 0 / 0.55);
+    --shadow-lg: 0 5px 0 0 rgb(0 0 0 / 0.6), 0 18px 32px -14px rgb(0 0 0 / 0.7);
 
     color-scheme: dark;
   }
 }
 
 :root[data-theme='dark'] {
-  --bg: #0a0c12;
-  --bg-elevated: #12151d;
-  --surface: rgb(255 255 255 / 0.045);
-  --surface-strong: rgb(20 24 33 / 0.86);
-  --border: rgb(255 255 255 / 0.09);
-  --border-strong: rgb(255 255 255 / 0.16);
+  --bg: #14171a;
+  --bg-elevated: #1b1e1f;
 
-  --fg: #e9ebf1;
-  --fg-muted: #a2acbd;
-  --fg-subtle: #6b7688;
+  --panel: #38393a;
+  --panel-hi: #5a5b59;
+  --panel-lo: #17181a;
+  --panel-outline: #050505;
 
-  --brand: #8b88ff;
-  --brand-strong: #a5a2ff;
-  --brand-contrast: #0a0c12;
-  --accent: #38d3f0;
+  --ink: #ebe7d8;
+  --ink-muted: #aca894;
+  --ink-subtle: #6f6c5a;
 
-  --success: #34d399;
-  --success-soft: rgb(52 211 153 / 0.16);
-  --danger: #f87171;
-  --danger-soft: rgb(248 113 113 / 0.18);
-  --warn: #fbbf24;
+  --brand: #6cb83e;
+  --brand-hi: #96e065;
+  --brand-lo: #2c4c15;
+  --brand-contrast: #0d1408;
 
-  --glow-a: rgb(120 116 255 / 0.4);
-  --glow-b: rgb(56 211 240 / 0.3);
-  --glow-c: rgb(192 132 252 / 0.28);
+  --gold: #eec24c;
+  --gold-hi: #ffe08a;
+  --gold-lo: #7c5c14;
 
-  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
-  --shadow-md: 0 6px 18px rgb(0 0 0 / 0.45);
-  --shadow-lg: 0 24px 64px -16px rgb(0 0 0 / 0.6), 0 10px 28px -10px rgb(0 0 0 / 0.45);
-  --shadow-glow: 0 0 0 1px rgb(139 136 255 / 0.22), 0 24px 70px -18px rgb(139 136 255 / 0.35);
+  --success: #6cb83e;
+  --success-soft: rgb(108 184 62 / 0.18);
+  --danger: #e2584a;
+  --danger-hi: #ff8478;
+  --danger-lo: #6b1c14;
+  --danger-soft: rgb(226 88 74 / 0.18);
+  --warn: var(--gold);
+
+  --shadow-sm: 0 2px 0 0 rgb(0 0 0 / 0.5);
+  --shadow-md: 0 3px 0 0 rgb(0 0 0 / 0.55);
+  --shadow-lg: 0 5px 0 0 rgb(0 0 0 / 0.6), 0 18px 32px -14px rgb(0 0 0 / 0.7);
 
   color-scheme: dark;
 }
@@ -176,19 +189,24 @@
 @theme inline {
   --color-bg: var(--bg);
   --color-bg-elevated: var(--bg-elevated);
-  --color-surface: var(--surface);
-  --color-surface-strong: var(--surface-strong);
-  --color-border: var(--border);
-  --color-border-strong: var(--border-strong);
 
-  --color-fg: var(--fg);
-  --color-fg-muted: var(--fg-muted);
-  --color-fg-subtle: var(--fg-subtle);
+  --color-panel: var(--panel);
+  --color-panel-hi: var(--panel-hi);
+  --color-panel-lo: var(--panel-lo);
+  --color-panel-outline: var(--panel-outline);
+
+  --color-fg: var(--ink);
+  --color-fg-muted: var(--ink-muted);
+  --color-fg-subtle: var(--ink-subtle);
 
   --color-brand: var(--brand);
-  --color-brand-strong: var(--brand-strong);
+  --color-brand-hi: var(--brand-hi);
+  --color-brand-lo: var(--brand-lo);
   --color-brand-contrast: var(--brand-contrast);
-  --color-accent: var(--accent);
+
+  --color-gold: var(--gold);
+  --color-gold-hi: var(--gold-hi);
+  --color-gold-lo: var(--gold-lo);
 
   --color-success: var(--success);
   --color-success-soft: var(--success-soft);
@@ -197,29 +215,23 @@
   --color-warn: var(--warn);
 
   --font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-display: 'Sora Variable', 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Pixelify Sans Variable', ui-sans-serif, system-ui, sans-serif;
   --font-mono: ui-monospace, 'SF Mono', 'JetBrains Mono', 'Fira Code', monospace;
 
-  --radius-lg: 1rem;
-  --radius-xl: 1.375rem;
-  --radius-2xl: 1.75rem;
-
-  --shadow-soft: var(--shadow-md);
-  --shadow-float: var(--shadow-lg);
-  --shadow-brand: var(--shadow-glow);
-
-  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
-  --ease-in-out-soft: cubic-bezier(0.65, 0, 0.35, 1);
+  --shadow-soft: var(--shadow-sm);
+  --shadow-float: var(--shadow-md);
+  --shadow-brand: var(--shadow-lg);
 }
 
 @layer base {
   * {
-    border-color: var(--color-border);
+    border-color: var(--color-panel-outline);
   }
 
   html {
     -webkit-text-size-adjust: 100%;
     scroll-behavior: smooth;
+    image-rendering: pixelated;
   }
 
   body {
@@ -240,33 +252,35 @@
   h4 {
     font-family: var(--font-display);
     font-weight: 600;
-    letter-spacing: -0.02em;
+    letter-spacing: 0.01em;
   }
 
   ::selection {
-    background-color: color-mix(in srgb, var(--color-brand) 28%, transparent);
-    color: var(--color-fg);
+    background-color: var(--color-brand);
+    color: var(--color-brand-contrast);
   }
 
   :focus-visible {
-    outline: 2px solid color-mix(in srgb, var(--color-brand) 70%, transparent);
+    outline: 3px solid var(--color-gold);
     outline-offset: 2px;
-    border-radius: 4px;
+    border-radius: 0;
   }
 
-  /* Pasek przewijania (dyskretny) */
+  /* Pasek przewijania (dyskretny, kwadratowy) */
   @supports selector(::-webkit-scrollbar) {
     ::-webkit-scrollbar {
-      width: 10px;
-      height: 10px;
+      width: 12px;
+      height: 12px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--color-bg-elevated);
     }
     ::-webkit-scrollbar-thumb {
-      background-color: color-mix(in srgb, var(--color-fg-subtle) 40%, transparent);
-      border-radius: 999px;
-      border: 2px solid var(--color-bg);
+      background-color: var(--color-panel);
+      border: 2px solid var(--color-panel-outline);
     }
     ::-webkit-scrollbar-thumb:hover {
-      background-color: color-mix(in srgb, var(--color-fg-subtle) 65%, transparent);
+      background-color: var(--color-panel-hi);
     }
   }
 }
@@ -284,25 +298,92 @@
   }
 }
 
-/* Pomocnicze klasy współdzielone przez komponenty. */
-@utility text-gradient {
-  background: linear-gradient(
-    100deg,
-    var(--color-fg) 0%,
-    color-mix(in srgb, var(--color-brand) 85%, var(--color-fg)) 55%,
-    var(--color-accent) 100%
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+/* ------------------------------------------------------------------ *
+ * Panele w stylu GUI gry: fazowana 3D-krawędź (jasna góra/lewo, ciemna
+ * dół/prawo) + ciemny zewnętrzny kontur, tak jak sloty ekwipunku i
+ * przyciski. Zero blur/szkła, ostre, prawie kwadratowe rogi.
+ * ------------------------------------------------------------------ */
+@utility pixel-corners {
+  border-radius: 3px;
 }
 
-@utility glass {
-  background-color: var(--color-surface);
-  /* Bez ręcznego prefiksu -webkit-: Lightning CSS dodaje prefiksy sam,
-     a podanie obu wariantów powoduje u niego zgubienie wersji standardowej. */
-  backdrop-filter: blur(16px) saturate(1.4);
-  border: 1px solid var(--color-border);
+@utility panel {
+  background-color: var(--color-panel);
+  border-style: solid;
+  border-width: 3px;
+  border-top-color: var(--color-panel-hi);
+  border-left-color: var(--color-panel-hi);
+  border-right-color: var(--color-panel-lo);
+  border-bottom-color: var(--color-panel-lo);
+  box-shadow: 0 0 0 2px var(--color-panel-outline);
+  border-radius: 3px;
+  color: var(--color-fg);
+}
+
+/* Wersja "wgnieciona" — odwrócona faza, do slotów/pól tekstowych i
+   ekranu mapy (jakby coś było osadzone w panelu, nie leżało na nim). */
+@utility panel-inset {
+  background-color: var(--color-bg-elevated);
+  border-style: solid;
+  border-width: 3px;
+  border-top-color: var(--color-panel-lo);
+  border-left-color: var(--color-panel-lo);
+  border-right-color: var(--color-panel-hi);
+  border-bottom-color: var(--color-panel-hi);
+  box-shadow: 0 0 0 2px var(--color-panel-outline);
+  border-radius: 3px;
+  color: var(--color-fg);
+}
+
+/* Przycisk w stylu GUI: wypukła faza, jaśnieje na hover, "wciska się"
+   na kliknięcie (translate + odwrócona faza). Kolor wypełnienia i
+   krawędzi ustawiają modyfikatory (.btn-brand / .btn-panel / .btn-danger). */
+@utility btn-bevel {
+  --bevel-fill: var(--color-panel);
+  --bevel-hi: var(--color-panel-hi);
+  --bevel-lo: var(--color-panel-lo);
+  background-color: var(--bevel-fill);
+  border-style: solid;
+  border-width: 3px;
+  border-top-color: var(--bevel-hi);
+  border-left-color: var(--bevel-hi);
+  border-right-color: var(--bevel-lo);
+  border-bottom-color: var(--bevel-lo);
+  box-shadow: 0 0 0 2px var(--color-panel-outline);
+  border-radius: 3px;
+  cursor: pointer;
+  transition:
+    transform 80ms steps(2),
+    filter 120ms ease;
+
+  &:hover {
+    filter: brightness(1.1);
+  }
+  &:active {
+    transform: translateY(3px);
+    border-top-color: var(--bevel-lo);
+    border-left-color: var(--bevel-lo);
+    border-right-color: var(--bevel-hi);
+    border-bottom-color: var(--bevel-hi);
+  }
+}
+
+@utility btn-brand {
+  --bevel-fill: var(--color-brand);
+  --bevel-hi: var(--color-brand-hi);
+  --bevel-lo: var(--color-brand-lo);
+  color: var(--color-brand-contrast);
+}
+
+@utility btn-panel {
+  color: var(--color-fg);
+}
+
+@utility btn-gold {
+  --bevel-fill: var(--color-gold);
+  --bevel-hi: var(--color-gold-hi);
+  --bevel-lo: var(--color-gold-lo);
+  color: var(--color-panel-outline);
 }
 
 @keyframes kt-fade-in-up {
@@ -320,4 +401,13 @@
    (MOTD itp.). Czysty CSS — działa niezależnie od cyklu JS/RAF. */
 @utility fade-in-up {
   animation: kt-fade-in-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Delikatna kratka pikseli w tle — zamiast rozmytych plam gradientu. */
+@utility pixel-grid-bg {
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--color-fg) 6%, transparent) 2px, transparent 2px),
+    linear-gradient(90deg, color-mix(in srgb, var(--color-fg) 6%, transparent) 2px, transparent 2px);
+  background-size: 32px 32px;
+  image-rendering: pixelated;
 }
