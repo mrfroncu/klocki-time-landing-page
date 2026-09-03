@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { config } from '../config'
 import type { DerivedStatus } from '../lib/derive'
-import { Reveal } from './ui/Reveal'
 import { ExpandIcon, ExternalIcon, MapIcon } from './icons'
 
 const MAP_LOAD_TIMEOUT_MS = 10000
@@ -10,6 +9,12 @@ interface MapSectionProps {
   status: DerivedStatus
 }
 
+/**
+ * Mapa jako pełnoszerokościowy "wizjer w świat" wtopiony w stronę — bez karty,
+ * bez ramki okna. Rozpięta na całą szerokość ekranu (poza kontenerem
+ * max-w-*, tak jak reszta sekcji), z etykietą i przyciskiem jako HUD
+ * nałożony bezpośrednio na podgląd, nie osobny pasek nad nim.
+ */
 export function MapSection({ status }: MapSectionProps) {
   const [loaded, setLoaded] = useState(false)
   const [timedOut, setTimedOut] = useState(false)
@@ -47,71 +52,46 @@ export function MapSection({ status }: MapSectionProps) {
             : 'none'
 
   return (
-    <section id="mapa" className="mx-auto max-w-6xl scroll-mt-24 px-4 py-14 sm:px-6 sm:py-20">
-      <Reveal className="mx-auto mb-8 flex max-w-2xl flex-col items-center gap-3 text-center">
-        <span className="inline-flex items-center gap-2 font-display text-xs font-semibold uppercase tracking-[0.18em] text-brand">
-          <MapIcon className="h-4 w-4" />
-          Świat
-        </span>
-        <h2 className="text-balance font-display text-3xl font-semibold tracking-wide sm:text-4xl">
-          Mapa serwera na żywo
-        </h2>
-        <p className="text-pretty text-fg-muted">
-          Przeglądaj ukształtowanie terenu, bazy i odkryte rejony. Podgląd ładuje się, gdy serwer jest
-          aktywny.
-        </p>
-      </Reveal>
+    <section id="mapa" className="relative w-full scroll-mt-20">
+      <div className="h-2 w-full bg-panel-outline sm:h-3" />
 
-      {/* Panel GUI trzymający mapę — bez udawanego paska przeglądarki:
-          etykieta zakładki + przycisk, a sam podgląd jest "wgnieciony"
-          w panel jak ekran/mapa-item, nie osobne okienko. */}
-      <Reveal delay={0.05}>
-        <div className="panel p-3 sm:p-4">
-          <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-            <span className="btn-bevel btn-brand inline-flex items-center gap-2 px-3 py-1.5 font-display text-xs font-semibold tracking-wide">
+      <div className="relative h-[62vh] max-h-[680px] min-h-[420px] w-full overflow-hidden bg-bg-elevated sm:h-[68vh]">
+        {embed && (
+          <iframe
+            src={config.mapUrl}
+            title={`Mapa serwera ${config.serverName}`}
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            allow="fullscreen"
+            onLoad={handleLoad}
+            className="absolute inset-0 h-full w-full border-0"
+          />
+        )}
+        {embed && !loaded && !timedOut && <MapSkeleton />}
+        {reason !== 'none' && <MapFallback reason={reason} online={serverReachable} />}
+
+        {/* HUD: etykieta + przycisk leżą NA mapie, nie w osobnym pasku nad nią.
+            pointer-events-none na wrapperze, żeby nie blokować przeciągania mapy. */}
+        <div className="pointer-events-none absolute inset-0 flex flex-col justify-between p-3 sm:p-5">
+          <div className="flex flex-wrap items-start justify-between gap-2">
+            <span className="btn-bevel btn-brand pointer-events-auto inline-flex items-center gap-2 px-3 py-1.5 font-display text-xs font-semibold tracking-wide">
               <MapIcon className="h-3.5 w-3.5" />
-              MAPA ŚWIATA
+              MAPA ŚWIATA · NA ŻYWO
             </span>
             <a
               href={config.mapUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-bevel btn-panel inline-flex items-center gap-1.5 px-3 py-1.5 font-display text-xs font-semibold tracking-wide"
+              className="btn-bevel btn-panel pointer-events-auto inline-flex items-center gap-1.5 px-3 py-1.5 font-display text-xs font-semibold tracking-wide"
             >
               <ExpandIcon className="h-3.5 w-3.5" />
               PEŁNY EKRAN
             </a>
           </div>
-
-          <div className="panel-inset relative aspect-[16/10] w-full overflow-hidden sm:aspect-[16/9]">
-            {embed && (
-              <iframe
-                src={config.mapUrl}
-                title={`Mapa serwera ${config.serverName}`}
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                allow="fullscreen"
-                onLoad={handleLoad}
-                className="absolute inset-0 h-full w-full border-0"
-              />
-            )}
-            {embed && !loaded && !timedOut && <MapSkeleton />}
-            {reason !== 'none' && <MapFallback reason={reason} online={serverReachable} />}
-          </div>
         </div>
-      </Reveal>
+      </div>
 
-      <Reveal delay={0.1} className="mt-4 flex justify-center">
-        <a
-          href={config.mapUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="btn-bevel btn-panel inline-flex items-center gap-2 px-5 py-2.5 font-display text-xs font-semibold tracking-wide"
-        >
-          <ExternalIcon className="h-4 w-4" />
-          OTWÓRZ MAPĘ W NOWEJ KARCIE
-        </a>
-      </Reveal>
+      <div className="h-2 w-full bg-panel-outline sm:h-3" />
     </section>
   )
 }
@@ -129,7 +109,7 @@ const MESSAGE: Record<Exclude<FallbackReason, 'none'>, string> = {
 
 function MapFallback({ reason, online }: { reason: Exclude<FallbackReason, 'none'>; online: boolean }) {
   return (
-    <div className="absolute inset-0 grid place-items-center p-8">
+    <div className="pixel-grid-bg absolute inset-0 grid place-items-center bg-bg-elevated p-8">
       <div className="flex max-w-sm flex-col items-center gap-4 text-center">
         <span className="btn-bevel btn-panel grid h-14 w-14 place-items-center text-brand">
           {reason === 'pending' ? (
