@@ -1,0 +1,16 @@
+{
+  "_comment": "Opcjonalny override konfiguracji w RUNTIME. Skopiuj do config.json obok index.html, aby zmienić wartości bez przebudowania. Pola puste/pominięte są ignorowane (używana jest wartość z .env).",
+  "serverName": "Klocki Time",
+  "serverAddress": "klocki-time.alleria.pl",
+  "serverPort": 25565,
+  "serverTagline": "Prywatny serwer Minecraft dla znajomych.",
+  "modpackName": "Klocki Time Pack",
+  "modpackVersion": "",
+  "mcVersionFallback": "1.20.1",
+  "discordUrl": "https://discord.gg/NyzNQWrBZW",
+  "mapUrl": "https://kt-mapa.alleria.pl/",
+  "statusUrl": "https://status.alleria.pl/",
+  "managementUrl": "https://kt-management.alleria.pl/",
+  "statusPollSeconds": 60,
+  "mapEmbed": true
+}

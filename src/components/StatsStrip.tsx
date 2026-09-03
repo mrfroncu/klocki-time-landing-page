@@ -1,0 +1,81 @@
+import { config } from '../config'
+import type { DerivedStatus, StatusTone } from '../lib/derive'
+import { CountUp } from './ui/CountUp'
+import { ActivityIcon, CubeIcon, TagIcon, UsersIcon } from './icons'
+
+const STATUS_COLOR: Record<StatusTone, string> = {
+  online: 'text-success',
+  sleeping: 'text-warn',
+  offline: 'text-danger',
+  pending: 'text-fg-muted',
+  error: 'text-warn',
+}
+
+interface StatsStripProps {
+  status: DerivedStatus
+}
+
+export function StatsStrip({ status }: StatsStripProps) {
+  const players =
+    status.playersOnline !== null && status.playersMax !== null
+      ? { online: status.playersOnline, max: status.playersMax }
+      : null
+
+  const items = [
+    {
+      key: 'status',
+      icon: ActivityIcon,
+      label: 'Status',
+      value: status.label,
+      tone: STATUS_COLOR[status.tone],
+    },
+    {
+      key: 'players',
+      icon: UsersIcon,
+      label: 'Gracze online',
+      value: players ? (
+        <span>
+          <CountUp value={players.online} className="tabular-nums" />
+          <span className="text-fg-subtle"> / {players.max}</span>
+        </span>
+      ) : (
+        <span className="text-fg-subtle">—</span>
+      ),
+      tone: 'text-fg',
+    },
+    {
+      key: 'version',
+      icon: CubeIcon,
+      label: 'Wersja Minecraft',
+      value: <span className="tabular-nums">{status.version}</span>,
+      tone: 'text-fg',
+    },
+    {
+      key: 'modpack',
+      icon: TagIcon,
+      label: config.modpackVersion ? `Modpack · ${config.modpackVersion}` : 'Modpack',
+      value: <span className="truncate">{config.modpackName}</span>,
+      tone: 'text-fg',
+    },
+  ]
+
+  return (
+    <dl className="glass mx-auto grid w-full max-w-3xl grid-cols-2 gap-px overflow-hidden rounded-2xl shadow-soft sm:grid-cols-4">
+      {items.map((item) => {
+        const Icon = item.icon
+        return (
+          <div
+            key={item.key}
+            className="flex flex-col gap-1.5 bg-bg-elevated/40 px-4 py-4 text-left"
+          >
+            <dt className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wide text-fg-subtle">
+              <Icon className="h-3.5 w-3.5" />
+              <span className="truncate">{item.label}</span>
+            </dt>
+            <dd className={`font-display text-lg font-semibold ${item.tone}`}>{item.value}</dd>
+          </div>
+        )
+      })}
+    </dl>
+  )
+}

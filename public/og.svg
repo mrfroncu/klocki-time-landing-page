@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b0d12" />
+      <stop offset="1" stop-color="#141a2b" />
+    </linearGradient>
+    <linearGradient id="brand" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#8b88ff" />
+      <stop offset="1" stop-color="#38d3f0" />
+    </linearGradient>
+    <radialGradient id="glow" cx="0.3" cy="0.2" r="0.8">
+      <stop offset="0" stop-color="#5b57f0" stop-opacity="0.55" />
+      <stop offset="1" stop-color="#5b57f0" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)" />
+  <rect width="1200" height="630" fill="url(#glow)" />
+
+  <g transform="translate(90 90)">
+    <rect width="96" height="96" rx="24" fill="url(#brand)" />
+    <path fill="#0b0d12" d="M26 22h12v20l14-20h15l-17 24 18 28H71L52 52v22H26z" />
+  </g>
+
+  <text x="92" y="330" fill="#e9ebf1" font-family="'Sora','Inter',system-ui,sans-serif" font-size="96" font-weight="700" letter-spacing="-3">Klocki Time</text>
+  <text x="96" y="392" fill="#a2acbd" font-family="'Inter',system-ui,sans-serif" font-size="34" font-weight="500">Prywatny serwer Minecraft dla znajomych</text>
+
+  <g font-family="'Inter',system-ui,sans-serif" font-size="26" font-weight="600">
+    <g transform="translate(92 470)">
+      <rect width="260" height="64" rx="32" fill="#ffffff" fill-opacity="0.06" stroke="#ffffff" stroke-opacity="0.12" />
+      <circle cx="40" cy="32" r="8" fill="#34d399" />
+      <text x="64" y="41" fill="#e9ebf1">Status na żywo</text>
+    </g>
+    <g transform="translate(372 470)">
+      <rect width="240" height="64" rx="32" fill="#ffffff" fill-opacity="0.06" stroke="#ffffff" stroke-opacity="0.12" />
+      <text x="32" y="41" fill="#e9ebf1">Mapa świata</text>
+    </g>
+    <g transform="translate(632 470)">
+      <rect width="300" height="64" rx="32" fill="#ffffff" fill-opacity="0.06" stroke="#ffffff" stroke-opacity="0.12" />
+      <text x="32" y="41" fill="#e9ebf1">Paczka modów</text>
+    </g>
+  </g>
+
+  <text x="92" y="588" fill="#6b7688" font-family="ui-monospace,monospace" font-size="24">klocki-time.alleria.pl</text>
+</svg>
