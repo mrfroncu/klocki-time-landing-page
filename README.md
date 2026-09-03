@@ -115,15 +115,34 @@ Aktualizacja treści bez builda: podmień `/var/www/klocki-time/config.json`.
 
 ### Docker
 
+Najprościej przez `docker compose` — plik `docker-compose.yml` jest w repo i
+sam wczytuje `.env` obok siebie (Compose robi to automatycznie, niezależnie od
+mechanizmu `.env` w Vite — to ten sam plik, dwa razy wykorzystany):
+
 ```bash
-docker build -t klocki-landing .
-docker run -d -p 8080:80 --name klocki-landing klocki-landing
-# -> http://localhost:8080
+# w katalogu z docker-compose.yml, Dockerfile, nginx.conf i .env
+docker compose up -d --build
+# -> http://<host>:8080
 ```
 
-Obraz to nginx serwujący `dist/` (build wykonuje się w wieloetapowym
-`Dockerfile`). Zmienne `.env` są wtedy zaszywane w trakcie `docker build` —
-przekaż je przez `--build-arg` lub plik `.env` obecny w kontekście budowania.
+⚠️ `.env` jest w `.gitignore`, więc **nie przyjedzie** przez `git clone`/`pull`
+ani przez samo skopiowanie repo bez ukrytych plików — skopiuj go na docelowy
+host ręcznie (obok `docker-compose.yml`), inaczej build użyje wartości
+domyślnych wpisanych w `docker-compose.yml` (adres `klocki-time.alleria.pl`,
+placeholdery dla Discorda/statusu itd.).
+
+Port hosta zmienisz zmienną `HOST_PORT` (też w `.env` lub jako
+`HOST_PORT=9000 docker compose up -d --build`). Po zmianie `.env` trzeba
+przebudować obraz (`--build`) — zmienne `VITE_*` są zaszywane w trakcie
+`docker build`, tak jak przy zwykłym `npm run build`.
+
+Bez Compose — czysty `docker build`/`run` (zmienne trzeba przekazać ręcznie
+przez `--build-arg`, tyle ile ich jest w [`Dockerfile`](Dockerfile)):
+
+```bash
+docker build -t klocki-landing --build-arg VITE_SERVER_ADDRESS=klocki-time.alleria.pl .
+docker run -d -p 8080:80 --name klocki-landing klocki-landing
+```
 
 ## Struktura
 
