@@ -2,8 +2,8 @@
 
 /* ------------------------------------------------------------------ *
  * Fonty self-hosted (pliki w public/fonts/ — bez zależności od CDN).
- *   Inter          — tekst, opisy, dłuższe zdania (czytelność).
- *   Pixelify Sans  — nagłówki, przyciski, etykiety, liczby (klimat gry).
+ *   Inter          — cały tekst, przyciski, wartości (czytelność).
+ *   Pixelify Sans  — tylko nazwa serwera i małe etykiety (akcent gry).
  * Podzbiory latin + latin-ext (polskie znaki).
  * ------------------------------------------------------------------ */
 @font-face {
@@ -63,120 +63,109 @@
 }
 
 /* ------------------------------------------------------------------ *
- * Paleta — GUI gry: kamienny panel z fazowaną 3D-krawędzią (jak sloty
- * ekwipunku/przyciski), trawiasta zieleń jako kolor akcji, bez
- * fioletowych gradientów i szkła. Light = jasny kamień/papier,
- * dark = głęboki bazalt/noc.
+ * Paleta: ciemny kamień / trawa / złoto. Płaskie powierzchnie, ostre
+ * krawędzie, twardy (nierozmyty) cień — nowocześnie, ale blokowo.
  * ------------------------------------------------------------------ */
 :root {
-  --bg: #eef1e2;
-  --bg-elevated: #e4dfc9;
+  --bg: #e6e9dc;
+  --surface: #f3f4ec;
+  --surface-2: #dde1d0;
+  --line: #1e2319;
+  --line-soft: rgb(30 35 25 / 0.16);
+  --shadow-ink: #1e2319;
 
-  --panel: #c6c6c6;
+  --panel: #c9ccc0;
   --panel-hi: #ffffff;
-  --panel-lo: #545454;
-  --panel-outline: #272723;
+  --panel-lo: #6b7062;
+  --panel-outline: #1e2319;
 
-  --ink: #2b2a1f;
-  --ink-muted: #5c5847;
-  --ink-subtle: #837e69;
+  --ink: #1b1f15;
+  --ink-muted: #525a46;
+  --ink-subtle: #7b826d;
 
-  --brand: #5c9e31;
-  --brand-hi: #86d454;
-  --brand-lo: #35590f;
+  --brand: #4d9a2a;
+  --brand-hi: #82d552;
+  --brand-lo: #2a5713;
   --brand-contrast: #ffffff;
 
-  --gold: #e0a526;
+  --gold: #d6a021;
   --gold-hi: #ffd35c;
-  --gold-lo: #8a5e0f;
+  --gold-lo: #7c580b;
 
-  --success: #5c9e31;
-  --success-soft: rgb(92 158 49 / 0.16);
-  --danger: #b3392b;
-  --danger-hi: #e5665a;
-  --danger-lo: #6b1c14;
-  --danger-soft: rgb(179 57 43 / 0.14);
+  --danger: #bf392a;
+  --danger-hi: #ee6b5c;
+  --danger-lo: #6d1c13;
+
+  --success: var(--brand);
   --warn: var(--gold);
-
-  --shadow-sm: 0 2px 0 0 rgb(0 0 0 / 0.18);
-  --shadow-md: 0 3px 0 0 rgb(0 0 0 / 0.22);
-  --shadow-lg: 0 5px 0 0 rgb(0 0 0 / 0.25), 0 14px 26px -12px rgb(0 0 0 / 0.35);
 
   color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
-    --bg: #14171a;
-    --bg-elevated: #1b1e1f;
+    --bg: #0e110e;
+    --surface: #161a16;
+    --surface-2: #0a0c0a;
+    --line: #2d332b;
+    --line-soft: rgb(255 255 255 / 0.09);
+    --shadow-ink: #040504;
 
-    --panel: #38393a;
-    --panel-hi: #5a5b59;
-    --panel-lo: #17181a;
-    --panel-outline: #050505;
+    --panel: #262b25;
+    --panel-hi: #454c42;
+    --panel-lo: #111410;
+    --panel-outline: #040504;
 
-    --ink: #ebe7d8;
-    --ink-muted: #aca894;
-    --ink-subtle: #6f6c5a;
+    --ink: #e9ebda;
+    --ink-muted: #a5aa97;
+    --ink-subtle: #6c7261;
 
-    --brand: #6cb83e;
-    --brand-hi: #96e065;
-    --brand-lo: #2c4c15;
-    --brand-contrast: #0d1408;
+    --brand: #62b93a;
+    --brand-hi: #93e263;
+    --brand-lo: #27501a;
+    --brand-contrast: #0a1206;
 
-    --gold: #eec24c;
-    --gold-hi: #ffe08a;
-    --gold-lo: #7c5c14;
+    --gold: #e6bd46;
+    --gold-hi: #ffdf86;
+    --gold-lo: #6d5211;
 
-    --success: #6cb83e;
-    --success-soft: rgb(108 184 62 / 0.18);
-    --danger: #e2584a;
-    --danger-hi: #ff8478;
+    --danger: #e25a4a;
+    --danger-hi: #ff8a7a;
     --danger-lo: #6b1c14;
-    --danger-soft: rgb(226 88 74 / 0.18);
-    --warn: var(--gold);
-
-    --shadow-sm: 0 2px 0 0 rgb(0 0 0 / 0.5);
-    --shadow-md: 0 3px 0 0 rgb(0 0 0 / 0.55);
-    --shadow-lg: 0 5px 0 0 rgb(0 0 0 / 0.6), 0 18px 32px -14px rgb(0 0 0 / 0.7);
 
     color-scheme: dark;
   }
 }
 
 :root[data-theme='dark'] {
-  --bg: #14171a;
-  --bg-elevated: #1b1e1f;
+  --bg: #0e110e;
+  --surface: #161a16;
+  --surface-2: #0a0c0a;
+  --line: #2d332b;
+  --line-soft: rgb(255 255 255 / 0.09);
+  --shadow-ink: #040504;
 
-  --panel: #38393a;
-  --panel-hi: #5a5b59;
-  --panel-lo: #17181a;
-  --panel-outline: #050505;
+  --panel: #262b25;
+  --panel-hi: #454c42;
+  --panel-lo: #111410;
+  --panel-outline: #040504;
 
-  --ink: #ebe7d8;
-  --ink-muted: #aca894;
-  --ink-subtle: #6f6c5a;
+  --ink: #e9ebda;
+  --ink-muted: #a5aa97;
+  --ink-subtle: #6c7261;
 
-  --brand: #6cb83e;
-  --brand-hi: #96e065;
-  --brand-lo: #2c4c15;
-  --brand-contrast: #0d1408;
+  --brand: #62b93a;
+  --brand-hi: #93e263;
+  --brand-lo: #27501a;
+  --brand-contrast: #0a1206;
 
-  --gold: #eec24c;
-  --gold-hi: #ffe08a;
-  --gold-lo: #7c5c14;
+  --gold: #e6bd46;
+  --gold-hi: #ffdf86;
+  --gold-lo: #6d5211;
 
-  --success: #6cb83e;
-  --success-soft: rgb(108 184 62 / 0.18);
-  --danger: #e2584a;
-  --danger-hi: #ff8478;
+  --danger: #e25a4a;
+  --danger-hi: #ff8a7a;
   --danger-lo: #6b1c14;
-  --danger-soft: rgb(226 88 74 / 0.18);
-  --warn: var(--gold);
-
-  --shadow-sm: 0 2px 0 0 rgb(0 0 0 / 0.5);
-  --shadow-md: 0 3px 0 0 rgb(0 0 0 / 0.55);
-  --shadow-lg: 0 5px 0 0 rgb(0 0 0 / 0.6), 0 18px 32px -14px rgb(0 0 0 / 0.7);
 
   color-scheme: dark;
 }
@@ -188,7 +177,10 @@
 /* Mapowanie palety na tokeny Tailwinda (inline => reaguje na zmianę motywu w runtime). */
 @theme inline {
   --color-bg: var(--bg);
-  --color-bg-elevated: var(--bg-elevated);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-line-soft: var(--line-soft);
 
   --color-panel: var(--panel);
   --color-panel-hi: var(--panel-hi);
@@ -208,30 +200,25 @@
   --color-gold-hi: var(--gold-hi);
   --color-gold-lo: var(--gold-lo);
 
-  --color-success: var(--success);
-  --color-success-soft: var(--success-soft);
   --color-danger: var(--danger);
-  --color-danger-soft: var(--danger-soft);
+  --color-danger-hi: var(--danger-hi);
+  --color-danger-lo: var(--danger-lo);
+
+  --color-success: var(--success);
   --color-warn: var(--warn);
 
   --font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-display: 'Pixelify Sans Variable', ui-sans-serif, system-ui, sans-serif;
   --font-mono: ui-monospace, 'SF Mono', 'JetBrains Mono', 'Fira Code', monospace;
-
-  --shadow-soft: var(--shadow-sm);
-  --shadow-float: var(--shadow-md);
-  --shadow-brand: var(--shadow-lg);
 }
 
 @layer base {
   * {
-    border-color: var(--color-panel-outline);
+    border-color: var(--color-line);
   }
 
   html {
     -webkit-text-size-adjust: 100%;
-    scroll-behavior: smooth;
-    image-rendering: pixelated;
   }
 
   body {
@@ -246,15 +233,6 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  h1,
-  h2,
-  h3,
-  h4 {
-    font-family: var(--font-display);
-    font-weight: 600;
-    letter-spacing: 0.01em;
-  }
-
   ::selection {
     background-color: var(--color-brand);
     color: var(--color-brand-contrast);
@@ -263,21 +241,19 @@
   :focus-visible {
     outline: 3px solid var(--color-gold);
     outline-offset: 2px;
-    border-radius: 0;
   }
 
-  /* Pasek przewijania (dyskretny, kwadratowy) */
   @supports selector(::-webkit-scrollbar) {
     ::-webkit-scrollbar {
       width: 12px;
       height: 12px;
     }
     ::-webkit-scrollbar-track {
-      background: var(--color-bg-elevated);
+      background: var(--color-surface-2);
     }
     ::-webkit-scrollbar-thumb {
       background-color: var(--color-panel);
-      border: 2px solid var(--color-panel-outline);
+      border: 2px solid var(--color-line);
     }
     ::-webkit-scrollbar-thumb:hover {
       background-color: var(--color-panel-hi);
@@ -286,9 +262,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
   *,
   *::before,
   *::after {
@@ -299,45 +272,34 @@
 }
 
 /* ------------------------------------------------------------------ *
- * Panele w stylu GUI gry: fazowana 3D-krawędź (jasna góra/lewo, ciemna
- * dół/prawo) + ciemny zewnętrzny kontur, tak jak sloty ekwipunku i
- * przyciski. Zero blur/szkła, ostre, prawie kwadratowe rogi.
+ * Powierzchnie: płaska karta z ostrą 2px krawędzią i twardym cieniem
+ * (bez blur), pole "wgniecione" pod adres/wartości oraz przyciski
+ * z fazą jak w GUI gry (tylko tam, gdzie ma to sens: główne CTA, ikonki).
  * ------------------------------------------------------------------ */
-@utility pixel-corners {
-  border-radius: 3px;
+@utility surface {
+  background-color: var(--color-surface);
+  border: 2px solid var(--color-line);
+  border-radius: 6px;
+  box-shadow: 4px 4px 0 0 var(--shadow-ink);
 }
 
-@utility panel {
-  background-color: var(--color-panel);
-  border-style: solid;
-  border-width: 3px;
-  border-top-color: var(--color-panel-hi);
-  border-left-color: var(--color-panel-hi);
-  border-right-color: var(--color-panel-lo);
-  border-bottom-color: var(--color-panel-lo);
-  box-shadow: 0 0 0 2px var(--color-panel-outline);
-  border-radius: 3px;
-  color: var(--color-fg);
+@utility field {
+  background-color: var(--color-surface-2);
+  border: 2px solid var(--color-line);
+  border-radius: 4px;
+  box-shadow: inset 0 2px 0 0 rgb(0 0 0 / 0.22);
 }
 
-/* Wersja "wgnieciona" — odwrócona faza, do slotów/pól tekstowych i
-   ekranu mapy (jakby coś było osadzone w panelu, nie leżało na nim). */
-@utility panel-inset {
-  background-color: var(--color-bg-elevated);
-  border-style: solid;
-  border-width: 3px;
-  border-top-color: var(--color-panel-lo);
-  border-left-color: var(--color-panel-lo);
-  border-right-color: var(--color-panel-hi);
-  border-bottom-color: var(--color-panel-hi);
-  box-shadow: 0 0 0 2px var(--color-panel-outline);
-  border-radius: 3px;
-  color: var(--color-fg);
+@utility label-caps {
+  font-family: var(--font-display);
+  font-size: 0.6875rem;
+  line-height: 1;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-fg-subtle);
 }
 
-/* Przycisk w stylu GUI: wypukła faza, jaśnieje na hover, "wciska się"
-   na kliknięcie (translate + odwrócona faza). Kolor wypełnienia i
-   krawędzi ustawiają modyfikatory (.btn-brand / .btn-panel / .btn-danger). */
+/* Przycisk z fazą: wypukły, jaśnieje na hover, wciska się na kliknięcie. */
 @utility btn-bevel {
   --bevel-fill: var(--color-panel);
   --bevel-hi: var(--color-panel-hi);
@@ -350,17 +312,18 @@
   border-right-color: var(--bevel-lo);
   border-bottom-color: var(--bevel-lo);
   box-shadow: 0 0 0 2px var(--color-panel-outline);
-  border-radius: 3px;
+  border-radius: 4px;
   cursor: pointer;
+  user-select: none;
   transition:
     transform 80ms steps(2),
     filter 120ms ease;
 
   &:hover {
-    filter: brightness(1.1);
+    filter: brightness(1.08);
   }
   &:active {
-    transform: translateY(3px);
+    transform: translateY(2px);
     border-top-color: var(--bevel-lo);
     border-left-color: var(--bevel-lo);
     border-right-color: var(--bevel-hi);
@@ -379,17 +342,32 @@
   color: var(--color-fg);
 }
 
-@utility btn-gold {
-  --bevel-fill: var(--color-gold);
-  --bevel-hi: var(--color-gold-hi);
-  --bevel-lo: var(--color-gold-lo);
-  color: var(--color-panel-outline);
+/* Płaski wiersz-link (drugorzędne akcje): obrys, hover podświetla tło. */
+@utility row-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border: 2px solid var(--color-line-soft);
+  border-radius: 4px;
+  color: var(--color-fg);
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease,
+    transform 80ms steps(2);
+
+  &:hover {
+    background-color: var(--color-surface-2);
+    border-color: var(--color-line);
+  }
+  &:active {
+    transform: translateY(1px);
+  }
 }
 
 @keyframes kt-fade-in-up {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(6px);
   }
   to {
     opacity: 1;
@@ -397,17 +375,15 @@
   }
 }
 
-/* Animacja wejścia dla elementów pojawiających się po asynchronicznym fetchu
-   (MOTD itp.). Czysty CSS — działa niezależnie od cyklu JS/RAF. */
+/* Wejście elementów po asynchronicznym fetchu (MOTD itp.) — czysty CSS. */
 @utility fade-in-up {
-  animation: kt-fade-in-up 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: kt-fade-in-up 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* Delikatna kratka pikseli w tle — zamiast rozmytych plam gradientu. */
+/* Cicha kratka pikseli w tle. */
 @utility pixel-grid-bg {
   background-image:
     linear-gradient(color-mix(in srgb, var(--color-fg) 6%, transparent) 2px, transparent 2px),
     linear-gradient(90deg, color-mix(in srgb, var(--color-fg) 6%, transparent) 2px, transparent 2px);
   background-size: 32px 32px;
-  image-rendering: pixelated;
 }

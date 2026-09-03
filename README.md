@@ -174,7 +174,12 @@ src/
     useServerStatus.ts  polling (pauza gdy karta w tle)
     derive.ts           model widoku: online / uśpiony / offline / błąd
   hooks/useTheme.ts     motyw light / dark / system
-  components/           Hero, MapSection, ActionGrid, Navbar, Footer, …
+  components/
+    ServerCard.tsx      prawa kolumna, góra: nazwa, status, gracze, MOTD, adres (kopiowanie)
+    MapPanel.tsx        lewa kolumna: mapa na całą wysokość + HUD (pełny ekran), fallback gdy serwer śpi
+    ActionsCard.tsx     prawa kolumna, dół: wersja/modpack, Discord (jedyne CTA), linki, stopka
+    Background.tsx      kratka pikseli + drobne cząsteczki w tle
+  App.tsx               układ: jeden ekran bez scrollowania (desktop), pion na mobile
 public/
   fonts/               self-hosted woff2 (Inter, Sora)
   config.example.json  wzór runtime-override

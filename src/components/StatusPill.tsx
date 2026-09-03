@@ -22,7 +22,7 @@ export function StatusPill({ tone, label, className }: StatusPillProps) {
 
   return (
     <span
-      className={`panel-inset inline-flex items-center gap-2.5 px-3 py-1.5 text-xs font-display font-semibold tracking-wide ${className ?? ''}`}
+      className={`field inline-flex items-center gap-2 px-2.5 py-1.5 text-xs font-semibold ${className ?? ''}`}
     >
       <span className="relative grid h-2 w-2 place-items-center">
         {animated && (
@@ -33,7 +33,7 @@ export function StatusPill({ tone, label, className }: StatusPillProps) {
             transition={{ duration: 1.8, repeat: Infinity, ease: 'easeOut' }}
           />
         )}
-        <span className={`h-2 w-2 ${c.dot}`} style={{ boxShadow: '0 0 0 1px var(--color-panel-outline)' }} />
+        <span className={`h-2 w-2 ${c.dot}`} />
       </span>
       <span className={c.text}>{label}</span>
     </span>

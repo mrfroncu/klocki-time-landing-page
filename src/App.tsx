@@ -1,13 +1,16 @@
 import { Background } from './components/Background'
-import { Navbar } from './components/Navbar'
-import { Hero } from './components/Hero'
-import { MapSection } from './components/MapSection'
-import { ActionGrid } from './components/ActionGrid'
-import { Footer } from './components/Footer'
+import { ServerCard } from './components/ServerCard'
+import { MapPanel } from './components/MapPanel'
+import { ActionsCard } from './components/ActionsCard'
 import { useTheme } from './hooks/useTheme'
 import { useServerStatus } from './lib/useServerStatus'
 import { deriveStatus } from './lib/derive'
 
+/**
+ * Jeden ekran, bez scrollowania (desktop): mapa po lewej na całą wysokość,
+ * po prawej kolumna z nazwą/statusem/adresem (góra) i akcjami (dół).
+ * Na małych ekranach to samo w pionie: nagłówek → mapa → akcje.
+ */
 export default function App() {
   const theme = useTheme()
   const statusState = useServerStatus()
@@ -15,25 +18,17 @@ export default function App() {
 
   return (
     <>
-      <a
-        href="#mapa"
-        className="btn-bevel btn-brand sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:px-4 focus:py-2 focus:font-display focus:text-sm focus:font-semibold"
-      >
-        Przejdź do treści
-      </a>
-
       <Background />
 
-      <div id="top" className="scroll-mt-24" />
-      <Navbar status={status} theme={theme} />
-
-      <main>
-        <Hero status={status} />
-        <MapSection status={status} />
-        <ActionGrid />
+      <main className="mx-auto grid w-full max-w-[1680px] gap-4 p-3 sm:p-4 lg:min-h-dvh lg:grid-cols-[minmax(0,1fr)_minmax(340px,400px)] lg:grid-rows-[auto_minmax(0,1fr)] lg:gap-5 lg:p-5">
+        <ServerCard status={status} theme={theme} className="lg:col-start-2 lg:row-start-1" />
+        <MapPanel status={status} className="lg:col-start-1 lg:row-span-2 lg:row-start-1" />
+        <ActionsCard
+          status={status}
+          updatedAt={statusState.updatedAt}
+          className="lg:col-start-2 lg:row-start-2"
+        />
       </main>
-
-      <Footer status={status} updatedAt={statusState.updatedAt} />
     </>
   )
 }

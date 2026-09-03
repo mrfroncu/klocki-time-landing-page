@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react'
-import { CheckIcon, CopyIcon, GlobeIcon } from './icons'
+import { CheckIcon, CopyIcon } from './icons'
 
 async function copyToClipboard(text: string): Promise<boolean> {
   try {
@@ -32,6 +32,7 @@ interface CopyAddressProps {
   address: string
 }
 
+/** Pełnej szerokości pole z adresem — kliknięcie w całość kopiuje. */
 export function CopyAddress({ address }: CopyAddressProps) {
   const reduce = useReducedMotion()
   const [state, setState] = useState<'idle' | 'copied' | 'error'>('idle')
@@ -46,7 +47,9 @@ export function CopyAddress({ address }: CopyAddressProps) {
     timeoutRef.current = setTimeout(() => setState('idle'), 2000)
   }, [address])
 
-  const message =
+  const hint =
+    state === 'copied' ? 'Skopiowano!' : state === 'error' ? 'Skopiuj ręcznie' : 'Kliknij, aby skopiować'
+  const announce =
     state === 'copied'
       ? 'Skopiowano adres serwera do schowka'
       : state === 'error'
@@ -54,19 +57,18 @@ export function CopyAddress({ address }: CopyAddressProps) {
         : ''
 
   return (
-    <div className="flex flex-col items-center gap-2">
+    <div className="flex flex-col gap-1">
       <button
         type="button"
         onClick={handleCopy}
-        className="panel-inset group flex items-center gap-3 py-3 pl-4 pr-2.5 text-left transition-transform duration-100 active:translate-y-0.5"
+        className="field group flex w-full items-center gap-3 py-2 pl-3.5 pr-2 text-left transition-transform duration-100 active:translate-y-px"
         aria-label={`Skopiuj adres serwera ${address}`}
       >
-        <GlobeIcon className="hidden shrink-0 text-fg-subtle sm:block" />
-        <span className="font-mono text-base font-medium tracking-tight text-fg sm:text-lg">
+        <span className="min-w-0 flex-1 truncate font-mono text-base font-semibold tracking-tight text-fg sm:text-[1.05rem]">
           {address}
         </span>
         <span
-          className={`btn-bevel ml-1 grid h-9 w-9 shrink-0 place-items-center ${
+          className={`btn-bevel grid h-9 w-9 shrink-0 place-items-center ${
             state === 'copied' ? 'btn-brand' : 'btn-panel'
           }`}
         >
@@ -79,21 +81,19 @@ export function CopyAddress({ address }: CopyAddressProps) {
               transition={{ duration: 0.15 }}
               className="grid place-items-center"
             >
-              {state === 'copied' ? <CheckIcon /> : <CopyIcon />}
+              {state === 'copied' ? <CheckIcon className="h-4.5 w-4.5" /> : <CopyIcon className="h-4.5 w-4.5" />}
             </motion.span>
           </AnimatePresence>
         </span>
       </button>
-
-      <span className="h-4 font-display text-[11px] tracking-wide text-fg-subtle" aria-hidden>
-        {state === 'copied'
-          ? '✓ Skopiowano!'
-          : state === 'error'
-            ? 'Skopiuj ręcznie'
-            : 'Kliknij, aby skopiować adres'}
+      <span
+        className={`h-4 text-[11px] ${state === 'copied' ? 'text-brand' : 'text-fg-subtle'}`}
+        aria-hidden
+      >
+        {hint}
       </span>
       <span role="status" aria-live="polite" className="sr-only">
-        {message}
+        {announce}
       </span>
     </div>
   )
