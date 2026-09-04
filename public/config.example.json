@@ -8,8 +8,10 @@
   "modpackVersion": "",
   "mcVersionFallback": "1.20.1",
   "discordUrl": "https://discord.gg/NyzNQWrBZW",
+  "mapMode": "remote",
   "mapUrl": "https://kt-mapa.alleria.pl/",
   "statusUrl": "https://status.alleria.pl/",
+  "monitorUrl": "https://monitor.alleria.pl/klocki-time",
   "managementUrl": "https://kt-management.alleria.pl/",
   "statusPollSeconds": 60,
   "mapEmbed": true

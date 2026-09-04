@@ -15,6 +15,7 @@ services:
         VITE_MAP_MODE: ${VITE_MAP_MODE:-remote}
         VITE_MAP_URL: ${VITE_MAP_URL:-https://kt-mapa.alleria.pl/}
         VITE_STATUS_URL: ${VITE_STATUS_URL:-https://status.alleria.pl/}
+        VITE_MONITOR_URL: ${VITE_MONITOR_URL:-https://monitor.alleria.pl/klocki-time}
         VITE_MANAGEMENT_URL: ${VITE_MANAGEMENT_URL:-https://kt-management.alleria.pl/}
         VITE_MCSTATUS_API_BASE: ${VITE_MCSTATUS_API_BASE:-https://api.mcstatus.io/v2/status/java}
         VITE_STATUS_POLL_SECONDS: ${VITE_STATUS_POLL_SECONDS:-60}

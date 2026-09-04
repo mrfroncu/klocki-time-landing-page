@@ -1,7 +1,7 @@
 import { motion, useReducedMotion, type Variants } from 'motion/react'
 import { config } from '../config'
 import type { DerivedStatus } from '../lib/derive'
-import { ActivityIcon, ArrowRightIcon, DiscordIcon, ExternalIcon, SettingsIcon } from './icons'
+import { ActivityIcon, ArrowRightIcon, DiscordIcon, ExternalIcon, MonitorIcon, SettingsIcon } from './icons'
 
 interface ActionsCardProps {
   status: DerivedStatus
@@ -72,6 +72,16 @@ export function ActionsCard({ status, updatedAt, className }: ActionsCardProps) 
         >
           <ActivityIcon className="h-4.5 w-4.5 shrink-0 text-gold" />
           Status serwerów
+          <ExternalIcon className="ml-auto h-4 w-4 shrink-0 text-fg-subtle" />
+        </a>
+        <a
+          href={config.monitorUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="row-link px-3 py-2.5 text-sm font-medium"
+        >
+          <MonitorIcon className="h-4.5 w-4.5 shrink-0 text-brand" />
+          Monitoring usług
           <ExternalIcon className="ml-auto h-4 w-4 shrink-0 text-fg-subtle" />
         </a>
         <a

@@ -12,6 +12,7 @@ interface ImportMetaEnv {
   readonly VITE_MAP_MODE?: string
   readonly VITE_MAP_URL?: string
   readonly VITE_STATUS_URL?: string
+  readonly VITE_MONITOR_URL?: string
   readonly VITE_MANAGEMENT_URL?: string
   readonly VITE_MCSTATUS_API_BASE?: string
   readonly VITE_STATUS_POLL_SECONDS?: string

@@ -46,98 +46,11 @@
 }
 
 /* ------------------------------------------------------------------ *
- * Motyw: light / dark sterowany atrybutem data-theme na <html>.
- *   data-theme="light"  -> zawsze jasny
- *   data-theme="dark"   -> zawsze ciemny
- *   data-theme="system" -> zgodnie z prefers-color-scheme
- * ------------------------------------------------------------------ */
-@custom-variant dark {
-  &:where([data-theme='dark'], [data-theme='dark'] *) {
-    @slot;
-  }
-  @media (prefers-color-scheme: dark) {
-    &:where([data-theme='system'], [data-theme='system'] *) {
-      @slot;
-    }
-  }
-}
-
-/* ------------------------------------------------------------------ *
- * Paleta: ciemny kamień / trawa / złoto. Płaskie powierzchnie, ostre
- * krawędzie, twardy (nierozmyty) cień — nowocześnie, ale blokowo.
+ * Paleta — TYLKO ciemna, na stałe (bez przełącznika/jasnego motywu).
+ * Ciemny kamień / trawa / złoto. Płaskie powierzchnie, ostre krawędzie,
+ * twardy (nierozmyty) cień — nowocześnie, ale blokowo.
  * ------------------------------------------------------------------ */
 :root {
-  --bg: #e6e9dc;
-  --surface: #f3f4ec;
-  --surface-2: #dde1d0;
-  --line: #1e2319;
-  --line-soft: rgb(30 35 25 / 0.16);
-  --shadow-ink: #1e2319;
-
-  --panel: #c9ccc0;
-  --panel-hi: #ffffff;
-  --panel-lo: #6b7062;
-  --panel-outline: #1e2319;
-
-  --ink: #1b1f15;
-  --ink-muted: #525a46;
-  --ink-subtle: #7b826d;
-
-  --brand: #4d9a2a;
-  --brand-hi: #82d552;
-  --brand-lo: #2a5713;
-  --brand-contrast: #ffffff;
-
-  --gold: #d6a021;
-  --gold-hi: #ffd35c;
-  --gold-lo: #7c580b;
-
-  --danger: #bf392a;
-  --danger-hi: #ee6b5c;
-  --danger-lo: #6d1c13;
-
-  --success: var(--brand);
-  --warn: var(--gold);
-
-  color-scheme: light;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) {
-    --bg: #0e110e;
-    --surface: #161a16;
-    --surface-2: #0a0c0a;
-    --line: #2d332b;
-    --line-soft: rgb(255 255 255 / 0.09);
-    --shadow-ink: #040504;
-
-    --panel: #262b25;
-    --panel-hi: #454c42;
-    --panel-lo: #111410;
-    --panel-outline: #040504;
-
-    --ink: #e9ebda;
-    --ink-muted: #a5aa97;
-    --ink-subtle: #6c7261;
-
-    --brand: #62b93a;
-    --brand-hi: #93e263;
-    --brand-lo: #27501a;
-    --brand-contrast: #0a1206;
-
-    --gold: #e6bd46;
-    --gold-hi: #ffdf86;
-    --gold-lo: #6d5211;
-
-    --danger: #e25a4a;
-    --danger-hi: #ff8a7a;
-    --danger-lo: #6b1c14;
-
-    color-scheme: dark;
-  }
-}
-
-:root[data-theme='dark'] {
   --bg: #0e110e;
   --surface: #161a16;
   --surface-2: #0a0c0a;
@@ -166,6 +79,9 @@
   --danger: #e25a4a;
   --danger-hi: #ff8a7a;
   --danger-lo: #6b1c14;
+
+  --success: var(--brand);
+  --warn: var(--gold);
 
   color-scheme: dark;
 }

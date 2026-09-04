@@ -1,16 +1,13 @@
 import { motion, useReducedMotion, type Variants } from 'motion/react'
 import { config, connectAddress } from '../config'
-import type { ThemeController } from '../hooks/useTheme'
 import type { DerivedStatus } from '../lib/derive'
 import { BrandMark } from './BrandMark'
 import { CopyAddress } from './CopyAddress'
 import { StatusPill } from './StatusPill'
-import { ThemeToggle } from './ThemeToggle'
 import { CountUp } from './ui/CountUp'
 
 interface ServerCardProps {
   status: DerivedStatus
-  theme: ThemeController
   className?: string
 }
 
@@ -22,7 +19,7 @@ const item: Variants = {
 const itemStill: Variants = { hidden: { opacity: 0 }, show: { opacity: 1 } }
 
 /** Prawa kolumna, góra: kto, jaki stan, jak dołączyć. */
-export function ServerCard({ status, theme, className }: ServerCardProps) {
+export function ServerCard({ status, className }: ServerCardProps) {
   const reduce = useReducedMotion()
   const v = reduce ? itemStill : item
   const players =
@@ -49,7 +46,6 @@ export function ServerCard({ status, theme, className }: ServerCardProps) {
           </h1>
           <p className="mt-1.5 truncate text-xs text-fg-muted">{config.serverTagline}</p>
         </div>
-        <ThemeToggle {...theme} />
       </motion.header>
 
       <motion.div variants={v} className="flex flex-wrap items-center gap-x-3 gap-y-2">

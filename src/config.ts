@@ -43,6 +43,8 @@ export interface AppConfig {
   mapUrl: string
   /** Strona ze statusem serwerów (otwierana w nowej karcie). */
   statusUrl: string
+  /** Monitoring usług (otwierany w nowej karcie). */
+  monitorUrl: string
   /** Panel zarządzania (otwierany w nowej karcie). */
   managementUrl: string
   /** Bazowy adres API statusu Minecraft. */
@@ -95,6 +97,7 @@ const baseConfig: AppConfig = {
   mapMode: mapMode(env.VITE_MAP_MODE),
   mapUrl: str(env.VITE_MAP_URL, 'https://kt-mapa.alleria.pl/'),
   statusUrl: str(env.VITE_STATUS_URL, 'https://status.alleria.pl/'),
+  monitorUrl: str(env.VITE_MONITOR_URL, 'https://monitor.alleria.pl/klocki-time'),
   managementUrl: str(env.VITE_MANAGEMENT_URL, 'https://kt-management.alleria.pl/'),
   mcStatusApiBase: str(env.VITE_MCSTATUS_API_BASE, 'https://api.mcstatus.io/v2/status/java'),
   statusPollSeconds: Math.max(15, int(env.VITE_STATUS_POLL_SECONDS, 60)),
