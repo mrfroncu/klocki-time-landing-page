@@ -84,6 +84,12 @@ values. Drop a `config.json` next to `index.html` (template:
 [`public/config.example.json`](public/config.example.json)) and reload -
 no rebuild needed.
 
+Under Docker, `/config.json` can instead be proxied to an external endpoint
+(a panel with an editable config, say) via `CONFIG_JSON_URL` - runtime, like
+`BLUEMAP_*`, read by `docker-entrypoint.sh` at container start and written
+into an nginx snippet before nginx boots. Empty (default) falls back to the
+static file above.
+
 ## Map embedding
 
 Controlled by `VITE_MAP_MODE`, two modes:

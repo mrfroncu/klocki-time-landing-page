@@ -49,6 +49,26 @@ else
   echo "[entrypoint] BlueMap wyłączony (BLUEMAP_ENABLED != true) — pomijam, /map będzie 502."
 fi
 
+CONFIG_JSON_URL="${CONFIG_JSON_URL:-}"
+mkdir -p /etc/nginx/snippets
+if [ -n "$CONFIG_JSON_URL" ]; then
+  echo "[entrypoint] /config.json: proxy do ${CONFIG_JSON_URL}"
+  cat > /etc/nginx/snippets/config-json.conf <<EOF
+location = /config.json {
+    proxy_pass ${CONFIG_JSON_URL};
+    proxy_ssl_server_name on;
+    add_header Cache-Control "no-store";
+}
+EOF
+else
+  echo "[entrypoint] /config.json: statyczny plik (CONFIG_JSON_URL nieustawione)"
+  cat > /etc/nginx/snippets/config-json.conf <<'EOF'
+location = /config.json {
+    add_header Cache-Control "no-store";
+}
+EOF
+fi
+
 echo "[entrypoint] Startuję nginx…"
 nginx -g 'daemon off;' &
 PIDS+=("$!")
