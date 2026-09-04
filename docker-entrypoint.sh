@@ -37,8 +37,11 @@ if [ "$BLUEMAP_ENABLED" = "true" ]; then
     "$BLUEMAP_DIR/config/storages/sql.conf.template" > "$BLUEMAP_DIR/config/storages/sql.conf"
 
   echo "[entrypoint] BlueMap: startuję webserver (-g -w) na :8100…"
+  # -cp (nie -jar!) — trzeba dorzucić sterownik JDBC do MariaDB/MySQL na
+  # classpath, bo bluemap-cli.jar go nie zawiera (patrz komentarz w Dockerfile).
   java -Xmx"${BLUEMAP_JAVA_MAX_MEM:-256M}" \
-    -jar "$BLUEMAP_DIR/bluemap-cli.jar" \
+    -cp "$BLUEMAP_DIR/bluemap-cli.jar:$BLUEMAP_DIR/mariadb-java-client.jar" \
+    de.bluecolored.bluemap.cli.BlueMapCLI \
     -c "$BLUEMAP_DIR/config" \
     -g -w &
   PIDS+=("$!")

@@ -44,6 +44,14 @@ COPY --from=build /app/dist /usr/share/nginx/html
 # przez --build-arg BLUEMAP_CLI_URL=...
 ARG BLUEMAP_CLI_URL=https://github.com/BlueMap-Minecraft/BlueMap/releases/download/v5.12/bluemap-5.12-cli.jar
 ADD ${BLUEMAP_CLI_URL} /opt/bluemap/bluemap-cli.jar
+
+# Sterownik JDBC do MySQL/MariaDB — BlueMap CLI go NIE zawiera (licencja GPL
+# nie pozwala go dołączyć), więc bez tego "sql" storage pada przy starcie
+# błędem "No suitable driver found for jdbc:mysql://...". Dołączamy go do
+# classpath ręcznie w docker-entrypoint.sh (java -cp zamiast -jar).
+ARG MARIADB_JDBC_URL=https://repo1.maven.org/maven2/org/mariadb/jdbc/mariadb-java-client/3.5.10/mariadb-java-client-3.5.10.jar
+ADD ${MARIADB_JDBC_URL} /opt/bluemap/mariadb-java-client.jar
+
 COPY bluemap/config /opt/bluemap/config
 
 COPY docker-entrypoint.sh /docker-entrypoint.sh
