@@ -13,7 +13,8 @@ interface MapPanelProps {
 
 /**
  * Lewa kolumna: mapa świata na całą wysokość ekranu. Etykieta i przycisk
- * pełnego ekranu leżą na mapie jako HUD (jedyne miejsce z tą akcją).
+ * pełnego ekranu tworzą osobny nagłówek nad mapą (nie nachodzą na kontrolki
+ * BlueMapa renderowane w górnej części iframe'a).
  *
  * Tryb "local" (config.mapMode): BlueMap serwowany z tego samego kontenera
  * pod /map, czytający gotowe kafelki z SQL — dostępny NIEZALEŻNIE od tego,
@@ -64,25 +65,12 @@ export function MapPanel({ status, className }: MapPanelProps) {
       initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.985 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-      className={`surface relative min-h-[52vh] overflow-hidden lg:min-h-0 ${className ?? ''}`}
+      className={`surface flex min-h-[52vh] flex-col overflow-hidden lg:min-h-0 ${className ?? ''}`}
       aria-label="Mapa świata"
     >
-      {embed && (
-        <iframe
-          src={mapUrl}
-          title={`Mapa serwera ${config.serverName}`}
-          referrerPolicy="no-referrer-when-downgrade"
-          allow="fullscreen"
-          onLoad={handleLoad}
-          className="absolute inset-0 h-full w-full border-0"
-        />
-      )}
-      {embed && !loaded && !timedOut && <MapSkeleton />}
-      {reason !== 'none' && <MapFallback reason={reason} reachable={reachable} mapUrl={mapUrl} />}
-
-      {/* HUD — wrapper nie łapie kliknięć, żeby dało się przeciągać mapę. */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between gap-2 p-3">
-        <span className="field pointer-events-auto inline-flex items-center gap-2 px-2.5 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-fg">
+      {/* Nagłówek okna — w normalnym flow, nie nachodzi na kontrolki BlueMapa. */}
+      <div className="flex shrink-0 items-center justify-between gap-2 border-b-2 border-line bg-surface-2 px-3 py-2">
+        <span className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-fg">
           <MapIcon className="h-3.5 w-3.5 text-brand" />
           Mapa świata
           {(isLocal || status.tone === 'online') && (
@@ -106,12 +94,28 @@ export function MapPanel({ status, className }: MapPanelProps) {
           href={mapUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="btn-bevel btn-panel pointer-events-auto grid h-9 w-9 place-items-center"
+          className="btn-bevel btn-panel grid h-8 w-8 place-items-center"
           aria-label="Otwórz mapę na pełnym ekranie"
           title="Pełny ekran"
         >
           <ExpandIcon className="h-4 w-4" />
         </a>
+      </div>
+
+      {/* Obszar mapy */}
+      <div className="relative flex-1">
+        {embed && (
+          <iframe
+            src={mapUrl}
+            title={`Mapa serwera ${config.serverName}`}
+            referrerPolicy="no-referrer-when-downgrade"
+            allow="fullscreen"
+            onLoad={handleLoad}
+            className="absolute inset-0 h-full w-full border-0"
+          />
+        )}
+        {embed && !loaded && !timedOut && <MapSkeleton />}
+        {reason !== 'none' && <MapFallback reason={reason} reachable={reachable} mapUrl={mapUrl} />}
       </div>
     </motion.section>
   )
