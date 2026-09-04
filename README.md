@@ -1,4 +1,4 @@
-# Klocki Time — landing page
+# Klocki Time - landing page
 
 Landing page for the **Klocki Time** Minecraft server: live status, player
 count, game version, embedded world map, one-click address copy, quick links
