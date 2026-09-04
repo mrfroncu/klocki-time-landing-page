@@ -1,208 +1,176 @@
 # Klocki Time — landing page
 
-Nowoczesna strona-wizytówka serwera Minecraft **Klocki Time**: status na żywo,
-liczba graczy, wersja gry, osadzona mapa świata, kopiowanie adresu jednym
-kliknięciem i szybkie linki (Discord, status, panel zarządzania).
+Landing page for the **Klocki Time** Minecraft server: live status, player
+count, game version, embedded world map, one-click address copy, quick links
+(Discord, status page, management panel).
 
-Strona jest w pełni **statyczna** — po zbudowaniu to zwykłe pliki w `dist/`,
-które serwuje dowolny hosting (nginx, Cloudflare Pages, Netlify, kontener…).
-Status serwera pobierany jest w przeglądarce z publicznego API
-[`api.mcstatus.io`](https://mcstatus.io).
+Fully static build — `npm run build` outputs plain files in `dist/`, served
+by whatever's in front of it. Server status is fetched client-side from the
+public [`api.mcstatus.io`](https://mcstatus.io) API, no backend of its own.
 
 ## Stack
 
-Vite 8 · React 19 · TypeScript · Tailwind CSS 4 · Motion (animacje) ·
-self-hosted fonty Inter + Sora.
+Vite 8, React 19, TypeScript, Tailwind CSS 4, Motion for animation.
+Self-hosted Inter + Sora (woff2, no CDN).
 
-## Wymagania
+## Requirements
 
-- Node.js **20.19+ / 22+** (zalecane 22 LTS) i npm
-- ⚠️ **Ścieżka projektu nie może zawierać znaku `#`.** Vite (dev server) nie
-  potrafi w takiej ścieżce serwować modułów. Produkcyjny `npm run build`
-  działa, ale `npm run dev` — nie. Jeśli katalog nadrzędny to np.
-  `#VisualStudio-Github`, przenieś projekt gdzie indziej albo zmień nazwę
-  katalogu (np. na `_VisualStudio-Github`).
+- Node **20.19+ / 22+** (22 LTS recommended), npm
+- Project path can't contain `#`. Vite's dev server can't resolve modules
+  through it — `npm run build` is unaffected, `npm run dev` isn't. If the
+  parent dir is something like `#VisualStudio-Github`, rename it
+  (`_VisualStudio-Github`) or move the project.
 
-## Szybki start
+## Quick start
 
 ```bash
 npm install
-cp .env.example .env      # uzupełnij wartości (Discord, modpack, linki…)
-npm run dev               # http://localhost:5173
+cp .env.example .env      # fill in Discord/modpack/links
+npm run dev                # http://localhost:5173
 ```
 
-## Budowanie i podgląd
+## Build & preview
 
 ```bash
-npm run build             # -> dist/
-npm run preview           # lokalny podgląd produkcyjnego builda (:4173)
-npm run lint              # sam type-check (tsc --noEmit)
+npm run build              # -> dist/
+npm run preview            # serve the production build locally (:4173)
+npm run lint                # tsc --noEmit only
 ```
 
-## Konfiguracja
+## Configuration
 
-Wszystkie ustawienia idą przez `.env` (prefiks `VITE_`, wczytywane **w czasie
-budowania** — po zmianie trzeba przebudować). Pełna lista z opisami jest
-w [`.env.example`](.env.example). Najważniejsze:
+Everything goes through `.env` (`VITE_` prefix, read at **build time** — a
+value change needs a rebuild). Full list with comments in
+[`.env.example`](.env.example). Key ones:
 
-| Zmienna | Znaczenie |
+| Variable | Purpose |
 | --- | --- |
-| `VITE_SERVER_NAME` | Nazwa serwera |
-| `VITE_SERVER_ADDRESS` | Adres kopiowany po kliknięciu (host bez portu) |
-| `VITE_SERVER_PORT` | Zostaw puste, gdy domena ma rekord SRV (patrz niżej) |
-| `VITE_MODPACK_NAME` / `VITE_MODPACK_VERSION` | Modpack (serwer nie podaje tego przez ping) |
-| `VITE_MC_VERSION_FALLBACK` | Wersja MC gdy API nie odpowie |
-| `VITE_DISCORD_URL` | Przycisk „Dołącz po paczkę modów" |
-| `VITE_MAP_URL` | Mapa (iframe + „pełny ekran") |
-| `VITE_STATUS_URL` | „Status serwerów" (nowa karta) |
-| `VITE_MANAGEMENT_URL` | „Panel zarządzania" (nowa karta) |
-| `VITE_MCSTATUS_API_BASE` | Baza API statusu (opc.) |
-| `VITE_STATUS_POLL_SECONDS` | Odświeżanie statusu, min. 15 (opc.) |
-| `VITE_MAP_EMBED` | `false` = nie osadzaj mapy, pokaż samą kartę z linkiem |
+| `VITE_SERVER_NAME` | Server display name |
+| `VITE_SERVER_ADDRESS` | Address copied on click (host, no port) |
+| `VITE_SERVER_PORT` | Leave empty if the domain has an SRV record (see below) |
+| `VITE_MODPACK_NAME` / `VITE_MODPACK_VERSION` | Ping doesn't expose this, so it's hardcoded |
+| `VITE_MC_VERSION_FALLBACK` | Version shown when the status API is unreachable |
+| `VITE_DISCORD_URL` | "Get the modpack" CTA target |
+| `VITE_MAP_URL` | Map source (iframe + fullscreen link) |
+| `VITE_STATUS_URL` | "Service status" link (new tab) |
+| `VITE_MANAGEMENT_URL` | "Management panel" link (new tab) |
+| `VITE_MCSTATUS_API_BASE` | Status API base, optional |
+| `VITE_STATUS_POLL_SECONDS` | Poll interval, min 15, optional |
+| `VITE_MAP_EMBED` | `false` disables the iframe, shows a link-out card instead |
 
-### SRV / LazyMC — dlaczego port zostaje pusty
+### Why `VITE_SERVER_PORT` stays empty (SRV / LazyMC)
 
-`klocki-time.alleria.pl` ma rekord SRV: `network5.alleria.pl:60320`, gdzie stoi
-**LazyMC** (usypia backend przy bezczynności, budzi po wejściu gracza i przez
-ten czas sam odpowiada na ping z MOTD „serwer śpi"). LazyMC przekierowuje do
-właściwego serwera na innym porcie wewnętrznie — gracz nigdy się z nim nie
-łączy bezpośrednio.
+`klocki-time.alleria.pl` has an SRV record pointing at
+`network5.alleria.pl:60320`, where **LazyMC** sits — it sleeps the backend on
+idle, wakes it on the first join, and answers pings itself in the meantime
+with a "server sleeping" MOTD. It then proxies to the real server on a
+different internal port; the client never connects to it directly.
 
-Dlatego `VITE_SERVER_PORT` musi być **puste**: sam adres domeny pozwala i
-klientowi Minecraft, i zapytaniu do `api.mcstatus.io` samodzielnie rozwiązać
-SRV. Wpisanie tam jakiegokolwiek portu (25565, port LazyMC, port backendu…)
-pomija SRV — gracz łączy się w złe miejsce, a status najczęściej pokaże
-offline. `src/lib/derive.ts` rozpoznaje po MOTD, że serwer śpi (a nie że jest
-offline) — działa to jednak tylko wtedy, gdy zapytanie w ogóle trafi do LazyMC.
+Leaving `VITE_SERVER_PORT` empty lets both the Minecraft client and the
+`api.mcstatus.io` query resolve the SRV record themselves. Hardcoding any
+port (25565, LazyMC's port, the backend's real port) skips SRV resolution —
+players land in the wrong place and the status check usually reads as
+offline. `src/lib/derive.ts` distinguishes "sleeping" from "offline" by MOTD
+content, which only works if the query actually reaches LazyMC.
 
-Adres w `VITE_SERVER_ADDRESS` musi też być **publicznie osiągalny** —
-`api.mcstatus.io` odpytuje serwer ze swoich maszyn w internecie, więc prywatny
-adres (np. Tailscale `100.x.x.x`) zawsze pokaże offline, niezależnie od tego,
-czy serwer faktycznie działa.
+`VITE_SERVER_ADDRESS` also has to be **publicly reachable** —
+`api.mcstatus.io` queries it from the internet, so a private address (a
+Tailscale `100.x.x.x`, say) always reads offline regardless of actual state.
 
-### Zmiana linków bez przebudowania (opcjonalnie)
+### Overriding config without a rebuild
 
-Aplikacja przy starcie próbuje pobrać `/config.json` z katalogu strony i nakłada
-jego wartości na te z `.env`. Wystarczy położyć obok `index.html` plik
-`config.json` (wzór: [`public/config.example.json`](public/config.example.json))
-i odświeżyć stronę — bez ponownego builda.
+On load, the app fetches `/config.json` and merges it over the `.env`
+values. Drop a `config.json` next to `index.html` (template:
+[`public/config.example.json`](public/config.example.json)) and reload —
+no rebuild needed.
 
-## Osadzanie mapy (ważne)
+## Map embedding
 
-Dwa tryby, `VITE_MAP_MODE`:
+Controlled by `VITE_MAP_MODE`, two modes:
 
-### `"remote"` (domyślny) — iframe do zewnętrznego hosta
+### `remote` (default) — iframe to an external host
 
-Mapa pokazywana jest w `<iframe>` **tylko gdy serwer jest online** (gdy jest
-uśpiony/offline strona pokazuje placeholder z przyciskiem otwarcia mapy w
-nowej karcie) — bo mapa żyje na tej samej maszynie co serwer i śpi razem z nim.
+The `<iframe>` only renders **while the server is online** — offline or
+asleep, the panel falls back to a placeholder with a link that opens the map
+in a new tab. This is because the map lives on the same box as the game
+server and sleeps with it.
 
-Żeby osadzenie w ogóle zadziałało, host mapy (`VITE_MAP_URL`) nie może
-blokować ramek. Jeśli w odpowiedziach pojawia się `X-Frame-Options: SAMEORIGIN`
-albo podobne:
+For the embed to actually render, the map host (`VITE_MAP_URL`) can't send a
+frame-blocking header. If it responds with `X-Frame-Options: SAMEORIGIN` (or
+similar):
 
-- w Cloudflare dla hosta mapy dodaj **Response Header Transform Rule**: usuń
-  `X-Frame-Options` i ustaw
-  `Content-Security-Policy: frame-ancestors 'self' https://klocki-time.alleria.pl`,
-- **albo** ustaw `VITE_MAP_EMBED=false` — sekcja mapy stanie się kartą z
-  przyciskiem „Otwórz mapę".
+- add a Cloudflare **Response Header Transform Rule** on the map host: strip
+  `X-Frame-Options`, set
+  `Content-Security-Policy: frame-ancestors 'self' https://klocki-time.alleria.pl`;
+- or set `VITE_MAP_EMBED=false` and skip the iframe entirely.
 
-### `"local"` — BlueMap serwowany z tego samego kontenera, zawsze dostępny
+### `local` — BlueMap served from this same container, always up
 
-Zamiast iframe'ować zewnętrzny host, **BlueMap CLI** (`-w`, tryb tylko-webserver)
-działa jako drugi proces w tym samym kontenerze co strona i czyta gotowe
-kafelki bezpośrednio z bazy SQL, do której renderuje plugin BlueMap na
-serwerze MC. Efekt: mapa działa **cały czas**, niezależnie od tego, czy serwer
-śpi czy jest offline — bo nie zależy od żyjącego serwera, tylko od tego, co już
-zostało wyrenderowane do bazy.
+Instead of framing an external host, **BlueMap CLI** runs headless
+(`-w`, webserver-only mode) as a second process inside this container,
+reading pre-rendered tiles straight out of the SQL database the BlueMap
+plugin on the MC server writes to. Result: the map stays up regardless of
+whether the game server is asleep or offline, since it depends on what's
+already been rendered into the database, not on a live server connection.
 
-nginx wystawia to pod `/map` (proxy do procesu BlueMapa na `127.0.0.1:8100`
-wewnątrz kontenera) — czyli `https://klocki-time.alleria.pl/map` to pełna,
-samodzielna aplikacja BlueMapa (bez chrome'u strony), a panel mapy na stronie
-głównej ją iframe'uje z tego samego originu, więc `X-Frame-Options` przestaje
-mieć znaczenie.
+nginx exposes it at `/map`, proxying to the BlueMap process on
+`127.0.0.1:8100` inside the container — so `https://klocki-time.alleria.pl/map`
+is a full standalone BlueMap app (no site chrome), and the map panel on the
+homepage frames it same-origin, sidestepping `X-Frame-Options` entirely.
 
-**Wymagane po stronie serwera Minecraft** (`config/bluemap/` w plikach
-serwera, przez panel/SFTP):
+**On the Minecraft server side** (`config/bluemap/`, via panel or SFTP):
 
-1. `storages/sql.conf` — `storage-type: sql`, `connection-url` do tej samej
-   bazy MySQL/MariaDB co niżej (`jdbc:mysql://host:port/baza?permitMysqlScheme`).
-2. w każdym `maps/<world>.conf` — `storage: "sql"` zamiast `"file"`.
-3. `webserver.conf` — `enabled: false` (serwuje teraz kontener strony, nie
-   serwer MC).
-4. `core.conf` — `accept-download: true` (wymóg BlueMapa, EULA Mojanga).
-5. w konsoli serwera: `/bluemap reload`, potem `/bluemap force-update <mapa>`
-   dla każdej mapy — jednorazowy pełny render do bazy.
+1. `storages/sql.conf` — `storage-type: sql`, `connection-url` pointing at
+   the same MySQL/MariaDB instance as below
+   (`jdbc:mysql://host:port/db?permitMysqlScheme`).
+2. every `maps/<world>.conf` — `storage: "sql"` instead of `"file"`.
+3. `webserver.conf` — `enabled: false` (the landing-page container serves
+   the webapp now, not the MC server).
+4. `core.conf` — `accept-download: true` (Mojang EULA, required by BlueMap).
+5. in-game console: `/bluemap reload`, then `/bluemap force-update <map>`
+   per map — one full render into the database.
 
-**Po stronie tego repo** — zmienne w `.env` (patrz `BLUEMAP_*` w
-[`.env.example`](.env.example)): `BLUEMAP_ENABLED=true`, `BLUEMAP_DB_HOST/PORT/NAME/USER/PASSWORD`
-(te same co w `sql.conf` na serwerze MC), plus `VITE_MAP_MODE=local`. Te
-`BLUEMAP_*` zmienne **nie trafiają do obrazu** — czytane są przy starcie
-kontenera (`docker-entrypoint.sh` generuje z nich `sql.conf` dla BlueMapa),
-więc zmiana hasła/hosta to tylko restart kontenera, bez rebuildu.
+**On this repo's side** — `.env` (`BLUEMAP_*`, see
+[`.env.example`](.env.example)): `BLUEMAP_ENABLED=true`,
+`BLUEMAP_DB_HOST/PORT/NAME/USER/PASSWORD` (matching `sql.conf` on the MC
+server), and `VITE_MAP_MODE=local`. `BLUEMAP_*` are **not** baked into the
+image — `docker-entrypoint.sh` generates `sql.conf` from them at container
+start, so rotating a password is a restart, not a rebuild.
 
-⚠️ Jar BlueMap CLI w obrazie (`BLUEMAP_CLI_URL` build-arg) musi być z **tego
-samego wydania** co plugin na serwerze MC, inaczej format danych w bazie może
-się nie zgadzać. Domyślnie `v5.12` (Forge 1.20.1). Dla Fabric 1.20.1 (BlueMap
-5.3): `--build-arg BLUEMAP_CLI_URL=https://github.com/BlueMap-Minecraft/BlueMap/releases/download/v5.3/bluemap-5.3-cli.jar`
-(albo `BLUEMAP_CLI_URL` w `.env`, skoro to build-arg czytany przez compose).
+⚠️ The BlueMap CLI jar baked into the image (`BLUEMAP_CLI_URL` build-arg)
+has to match the plugin's release line on the MC server, or the SQL data
+format won't line up. Defaults to `v5.12` (Forge 1.20.1). For Fabric 1.20.1
+(BlueMap 5.3):
+`--build-arg BLUEMAP_CLI_URL=https://github.com/BlueMap-Minecraft/BlueMap/releases/download/v5.3/bluemap-5.3-cli.jar`
+(or `BLUEMAP_CLI_URL` in `.env`, since compose reads it as a build-arg too).
 
 ## Deploy
 
-### nginx (statycznie)
-
-Skopiuj zawartość `dist/` na serwer i wskaż na nią `root`:
-
-```nginx
-server {
-    listen 443 ssl http2;
-    server_name klocki-time.alleria.pl;
-
-    root /var/www/klocki-time;
-    index index.html;
-
-    # SPA — jedna strona, brak routingu; wystarczy zwykłe serwowanie plików
-    location / {
-        try_files $uri $uri/ /index.html;
-    }
-
-    # długi cache dla zahashowanych assetów i fontów
-    location /assets/ { expires 1y; add_header Cache-Control "public, immutable"; }
-    location /fonts/  { expires 1y; add_header Cache-Control "public, immutable"; }
-
-    gzip on;
-    gzip_types text/css application/javascript image/svg+xml application/json;
-}
-```
-
-Aktualizacja treści bez builda: podmień `/var/www/klocki-time/config.json`.
-
 ### Docker
 
-Najprościej przez `docker compose` — plik `docker-compose.yml` jest w repo i
-sam wczytuje `.env` obok siebie (Compose robi to automatycznie, niezależnie od
-mechanizmu `.env` w Vite — to ten sam plik, dwa razy wykorzystany):
+Required if you're running `VITE_MAP_MODE=local` — see below. `docker
+compose` picks up `.env` from the same directory automatically:
 
 ```bash
-# w katalogu z docker-compose.yml, Dockerfile, nginx.conf i .env
+# next to docker-compose.yml, Dockerfile, nginx.conf and .env
 docker compose up -d --build
 # -> http://<host>:8080
 ```
 
-⚠️ `.env` jest w `.gitignore`, więc **nie przyjedzie** przez `git clone`/`pull`
-ani przez samo skopiowanie repo bez ukrytych plików — skopiuj go na docelowy
-host ręcznie (obok `docker-compose.yml`), inaczej build użyje wartości
-domyślnych wpisanych w `docker-compose.yml` (adres `klocki-time.alleria.pl`,
-placeholdery dla Discorda/statusu itd.).
+`.env` is gitignored, so it won't show up from a `git clone`/`pull` — copy it
+to the target host by hand, next to `docker-compose.yml`. Without it, the
+build falls back to the defaults hardcoded in `docker-compose.yml`
+(`klocki-time.alleria.pl`, placeholder Discord/status links, etc).
 
-Port hosta zmienisz zmienną `HOST_PORT` (też w `.env` lub jako
-`HOST_PORT=9000 docker compose up -d --build`). Po zmianie `.env` trzeba
-przebudować obraz (`--build`) — zmienne `VITE_*` są zaszywane w trakcie
-`docker build`, tak jak przy zwykłym `npm run build`.
+Host port is `HOST_PORT` (in `.env`, or inline:
+`HOST_PORT=9000 docker compose up -d --build`). Any `.env` change needs
+`--build` — `VITE_*` values get baked in during `docker build`, same as a
+plain `npm run build`.
 
-Bez Compose — czysty `docker build`/`run` (build-argi z [`Dockerfile`](Dockerfile)
-dla `VITE_*`/`BLUEMAP_CLI_URL`; `BLUEMAP_*` z sekretami idą jako `-e` przy
-`docker run`, nie `--build-arg`, bo czyta je entrypoint przy starcie, nie build):
+Without compose — plain `docker build`/`run` (build-args for `VITE_*` /
+`BLUEMAP_CLI_URL` per [`Dockerfile`](Dockerfile); `BLUEMAP_*` secrets go in
+as `-e` on `docker run`, not `--build-arg` — the entrypoint reads them at
+container start, not at build time):
 
 ```bash
 docker build -t klocki-landing --build-arg VITE_SERVER_ADDRESS=klocki-time.alleria.pl .
@@ -211,25 +179,36 @@ docker run -d -p 8080:80 --name klocki-landing \
   klocki-landing
 ```
 
-## Struktura
+### Static nginx — deprecated
+
+Only viable with `VITE_MAP_MODE=remote`. `local` mode needs the BlueMap CLI
+process the Dockerfile bundles (Java runtime, JDBC driver, `nginx.conf`
+proxying to `127.0.0.1:8100`, all wired up by `docker-entrypoint.sh`) — a
+bare static file server has nothing to proxy to, so `/map`, `/maps` and
+`/settings.json` just fail. If you're on `remote` mode there's no such
+dependency: copy `dist/` to any static host and serve it as an SPA (`try_files
+$uri $uri/ /index.html`, long-cache `/assets/` and `/fonts/`) — nothing
+BlueMap-specific to configure.
+
+## Structure
 
 ```
-docker-entrypoint.sh   startuje nginx + (opcjonalnie) BlueMap CLI w jednym kontenerze
-bluemap/config/         szablony configów CLI-owego BlueMapa (webserver-only, storage: sql)
+docker-entrypoint.sh    boots nginx + (optionally) BlueMap CLI in one container
+bluemap/config/         BlueMap CLI templates (webserver-only, storage: sql)
 src/
-  config.ts            odczyt .env + merge z /config.json
+  config.ts              reads .env, merges /config.json over it
   lib/
-    mcstatus.ts         klient API statusu + normalizacja
-    useServerStatus.ts  polling (pauza gdy karta w tle)
-    derive.ts           model widoku: online / uśpiony / offline / błąd
-  hooks/useTheme.ts     motyw light / dark / system
+    mcstatus.ts           status API client + normalization
+    useServerStatus.ts    polling (paused while tab is backgrounded)
+    derive.ts             view model: online / sleeping / offline / error
+  hooks/useTheme.ts       light / dark / system
   components/
-    ServerCard.tsx      prawa kolumna, góra: nazwa, status, gracze, MOTD, adres (kopiowanie)
-    MapPanel.tsx        lewa kolumna: mapa na całą wysokość + HUD (pełny ekran), fallback gdy serwer śpi
-    ActionsCard.tsx     prawa kolumna, dół: wersja/modpack, Discord (jedyne CTA), linki, stopka
-    Background.tsx      kratka pikseli + drobne cząsteczki w tle
-  App.tsx               układ: jeden ekran bez scrollowania (desktop), pion na mobile
+    ServerCard.tsx        right column, top: name, status, players, MOTD, address
+    MapPanel.tsx           left column: full-height map + header (fullscreen), sleep/offline fallback
+    ActionsCard.tsx        right column, bottom: version/modpack, Discord CTA, links, footer
+    Background.tsx         pixel grid + particle background
+  App.tsx                  single-screen layout on desktop, stacked on mobile
 public/
-  fonts/               self-hosted woff2 (Inter, Sora)
-  config.example.json  wzór runtime-override
+  fonts/                 self-hosted woff2 (Inter, Sora)
+  config.example.json    runtime-override template
 ```
