@@ -30,7 +30,16 @@ export interface AppConfig {
   mcVersionFallback: string
   /** Zaproszenie na Discord — „dołącz po paczkę". */
   discordUrl: string
-  /** Adres mapy świata (iframe + „pełny ekran"). */
+  /**
+   * `"local"` — mapę serwuje BlueMap (CLI, tryb -w) uruchomiony w tym samym
+   * kontenerze co strona, wystawiony pod `/map` (nginx proxy do :8100).
+   * Działa niezależnie od tego, czy serwer MC śpi — BlueMap czyta gotowe
+   * kafelki z bazy SQL, nie z żyjącego serwera. `mapUrl` jest wtedy ignorowany.
+   * `"remote"` — stare zachowanie: iframe do zewnętrznego `mapUrl`, dostępny
+   * tylko gdy `status.tone === 'online'`.
+   */
+  mapMode: 'local' | 'remote'
+  /** Adres mapy świata w trybie "remote" (iframe + „pełny ekran"). */
   mapUrl: string
   /** Strona ze statusem serwerów (otwierana w nowej karcie). */
   statusUrl: string
@@ -62,6 +71,9 @@ const intOrNull = (value: string | undefined): number | null => {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : null
 }
 
+const mapMode = (value: string | undefined): 'local' | 'remote' =>
+  value?.trim().toLowerCase() === 'local' ? 'local' : 'remote'
+
 const bool = (value: string | undefined, fallback: boolean): boolean => {
   const v = value?.trim().toLowerCase()
   if (v === 'true' || v === '1' || v === 'yes') return true
@@ -80,6 +92,7 @@ const baseConfig: AppConfig = {
   modpackVersion: str(env.VITE_MODPACK_VERSION, ''),
   mcVersionFallback: str(env.VITE_MC_VERSION_FALLBACK, '1.20.1'),
   discordUrl: str(env.VITE_DISCORD_URL, 'https://discord.gg/NyzNQWrBZW'),
+  mapMode: mapMode(env.VITE_MAP_MODE),
   mapUrl: str(env.VITE_MAP_URL, 'https://kt-mapa.alleria.pl/'),
   statusUrl: str(env.VITE_STATUS_URL, 'https://status.alleria.pl/'),
   managementUrl: str(env.VITE_MANAGEMENT_URL, 'https://kt-management.alleria.pl/'),
@@ -99,6 +112,15 @@ export let config: AppConfig = baseConfig
  */
 export const connectAddress = (c: AppConfig = config): string =>
   c.serverPort ? `${c.serverAddress}:${c.serverPort}` : c.serverAddress
+
+/**
+ * Adres mapy do faktycznego użycia (iframe / „pełny ekran"), z
+ * uwzględnieniem trybu. W "local" to zawsze `/map/` na tym samym originie
+ * (ten sam kontener) — bez problemów z X-Frame-Options i bez zależności od
+ * tego, czy serwer MC akurat żyje.
+ */
+export const resolvedMapUrl = (c: AppConfig = config): string =>
+  c.mapMode === 'local' ? '/map/' : c.mapUrl
 
 /**
  * Pobiera opcjonalny `/config.json` i nakłada go na konfigurację z `.env`.

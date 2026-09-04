@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion, useReducedMotion } from 'motion/react'
-import { config } from '../config'
+import { config, resolvedMapUrl } from '../config'
 import type { DerivedStatus } from '../lib/derive'
 import { ExpandIcon, ExternalIcon, MapIcon } from './icons'
 
@@ -14,6 +14,11 @@ interface MapPanelProps {
 /**
  * Lewa kolumna: mapa świata na całą wysokość ekranu. Etykieta i przycisk
  * pełnego ekranu leżą na mapie jako HUD (jedyne miejsce z tą akcją).
+ *
+ * Tryb "local" (config.mapMode): BlueMap serwowany z tego samego kontenera
+ * pod /map, czytający gotowe kafelki z SQL — dostępny NIEZALEŻNIE od tego,
+ * czy serwer MC śpi. Tryb "remote": stary iframe do zewnętrznego mapUrl,
+ * osadzany tylko gdy serwer jest online.
  */
 export function MapPanel({ status, className }: MapPanelProps) {
   const reduce = useReducedMotion()
@@ -21,10 +26,10 @@ export function MapPanel({ status, className }: MapPanelProps) {
   const [timedOut, setTimedOut] = useState(false)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  // Mapa żyje razem z serwerem — uśpiony/offline = nie osadzamy (byłaby
-  // pusta ramka albo strona błędu proxy).
-  const embed = config.mapEmbed && status.tone === 'online'
-  const reachable = status.tone === 'online' || status.tone === 'sleeping'
+  const isLocal = config.mapMode === 'local'
+  const mapUrl = resolvedMapUrl()
+  const embed = config.mapEmbed && (isLocal || status.tone === 'online')
+  const reachable = isLocal || status.tone === 'online' || status.tone === 'sleeping'
 
   useEffect(() => {
     if (!embed) return
@@ -42,15 +47,17 @@ export function MapPanel({ status, className }: MapPanelProps) {
 
   const reason: FallbackReason = !config.mapEmbed
     ? 'disabled'
-    : status.tone === 'offline'
-      ? 'offline'
-      : status.tone === 'sleeping'
-        ? 'sleeping'
-        : status.tone === 'pending' || status.tone === 'error'
-          ? 'pending'
-          : timedOut && !loaded
-            ? 'timeout'
-            : 'none'
+    : timedOut && !loaded
+      ? 'timeout'
+      : isLocal
+        ? 'none'
+        : status.tone === 'offline'
+          ? 'offline'
+          : status.tone === 'sleeping'
+            ? 'sleeping'
+            : status.tone === 'pending' || status.tone === 'error'
+              ? 'pending'
+              : 'none'
 
   return (
     <motion.section
@@ -62,7 +69,7 @@ export function MapPanel({ status, className }: MapPanelProps) {
     >
       {embed && (
         <iframe
-          src={config.mapUrl}
+          src={mapUrl}
           title={`Mapa serwera ${config.serverName}`}
           referrerPolicy="no-referrer-when-downgrade"
           allow="fullscreen"
@@ -71,14 +78,14 @@ export function MapPanel({ status, className }: MapPanelProps) {
         />
       )}
       {embed && !loaded && !timedOut && <MapSkeleton />}
-      {reason !== 'none' && <MapFallback reason={reason} reachable={reachable} />}
+      {reason !== 'none' && <MapFallback reason={reason} reachable={reachable} mapUrl={mapUrl} />}
 
       {/* HUD — wrapper nie łapie kliknięć, żeby dało się przeciągać mapę. */}
       <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between gap-2 p-3">
         <span className="field pointer-events-auto inline-flex items-center gap-2 px-2.5 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-fg">
           <MapIcon className="h-3.5 w-3.5 text-brand" />
           Mapa świata
-          {status.tone === 'online' && (
+          {(isLocal || status.tone === 'online') && (
             <span className="ml-0.5 inline-flex items-center gap-1.5 text-brand">
               <span className="relative grid h-1.5 w-1.5 place-items-center">
                 {!reduce && (
@@ -91,12 +98,12 @@ export function MapPanel({ status, className }: MapPanelProps) {
                 )}
                 <span className="h-1.5 w-1.5 bg-brand" />
               </span>
-              na żywo
+              {isLocal ? 'zawsze dostępna' : 'na żywo'}
             </span>
           )}
         </span>
         <a
-          href={config.mapUrl}
+          href={mapUrl}
           target="_blank"
           rel="noopener noreferrer"
           className="btn-bevel btn-panel pointer-events-auto grid h-9 w-9 place-items-center"
@@ -124,9 +131,11 @@ const MESSAGE: Record<Exclude<FallbackReason, 'none'>, string> = {
 function MapFallback({
   reason,
   reachable,
+  mapUrl,
 }: {
   reason: Exclude<FallbackReason, 'none'>
   reachable: boolean
+  mapUrl: string
 }) {
   return (
     <div className="pixel-grid-bg absolute inset-0 grid place-items-center bg-surface-2 p-6">
@@ -141,7 +150,7 @@ function MapFallback({
         <p className="text-pretty text-sm text-fg-muted">{MESSAGE[reason]}</p>
         {reason !== 'pending' && (
           <a
-            href={config.mapUrl}
+            href={mapUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="btn-bevel btn-panel inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold"

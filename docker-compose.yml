@@ -12,14 +12,27 @@ services:
         VITE_MODPACK_VERSION: ${VITE_MODPACK_VERSION:-}
         VITE_MC_VERSION_FALLBACK: ${VITE_MC_VERSION_FALLBACK:-1.20.1}
         VITE_DISCORD_URL: ${VITE_DISCORD_URL:-https://discord.gg/NyzNQWrBZW}
+        VITE_MAP_MODE: ${VITE_MAP_MODE:-remote}
         VITE_MAP_URL: ${VITE_MAP_URL:-https://kt-mapa.alleria.pl/}
         VITE_STATUS_URL: ${VITE_STATUS_URL:-https://status.alleria.pl/}
         VITE_MANAGEMENT_URL: ${VITE_MANAGEMENT_URL:-https://kt-management.alleria.pl/}
         VITE_MCSTATUS_API_BASE: ${VITE_MCSTATUS_API_BASE:-https://api.mcstatus.io/v2/status/java}
         VITE_STATUS_POLL_SECONDS: ${VITE_STATUS_POLL_SECONDS:-60}
         VITE_MAP_EMBED: ${VITE_MAP_EMBED:-true}
+        # Jar BlueMap CLI musi być z tego samego wydania co plugin na serwerze MC
+        # (Forge 1.20.1 -> 5.12, domyślnie poniżej; Fabric -> podmień na 5.3).
+        BLUEMAP_CLI_URL: ${BLUEMAP_CLI_URL:-https://github.com/BlueMap-Minecraft/BlueMap/releases/download/v5.12/bluemap-5.12-cli.jar}
     image: klocki-time-landing:latest
     container_name: klocki-time-landing
     restart: unless-stopped
     ports:
       - '${HOST_PORT:-8970}:80'
+    # BlueMap czyta stąd (runtime, NIE trafia do obrazu) — patrz .env.example.
+    environment:
+      BLUEMAP_ENABLED: ${BLUEMAP_ENABLED:-false}
+      BLUEMAP_DB_HOST: ${BLUEMAP_DB_HOST:-}
+      BLUEMAP_DB_PORT: ${BLUEMAP_DB_PORT:-3306}
+      BLUEMAP_DB_NAME: ${BLUEMAP_DB_NAME:-}
+      BLUEMAP_DB_USER: ${BLUEMAP_DB_USER:-}
+      BLUEMAP_DB_PASSWORD: ${BLUEMAP_DB_PASSWORD:-}
+      BLUEMAP_JAVA_MAX_MEM: ${BLUEMAP_JAVA_MAX_MEM:-256M}

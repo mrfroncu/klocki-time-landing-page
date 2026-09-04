@@ -89,19 +89,63 @@ i odświeżyć stronę — bez ponownego builda.
 
 ## Osadzanie mapy (ważne)
 
-Mapa jest pokazywana w `<iframe>` **tylko gdy serwer jest online** (gdy jest
-uśpiony/offline strona pokazuje zgrabny placeholder z przyciskiem otwarcia mapy
-w nowej karcie).
+Dwa tryby, `VITE_MAP_MODE`:
 
-Żeby osadzenie w ogóle zadziałało, host mapy (`kt-mapa.alleria.pl`) nie może
-blokować ramek. Obecnie w odpowiedziach pojawia się `X-Frame-Options: SAMEORIGIN`.
-Jeśli mapa nie chce się wyświetlać wewnątrz strony:
+### `"remote"` (domyślny) — iframe do zewnętrznego hosta
 
-- w Cloudflare dla `kt-mapa.alleria.pl` dodaj **Response Header Transform Rule**:
-  usuń `X-Frame-Options` i ustaw
+Mapa pokazywana jest w `<iframe>` **tylko gdy serwer jest online** (gdy jest
+uśpiony/offline strona pokazuje placeholder z przyciskiem otwarcia mapy w
+nowej karcie) — bo mapa żyje na tej samej maszynie co serwer i śpi razem z nim.
+
+Żeby osadzenie w ogóle zadziałało, host mapy (`VITE_MAP_URL`) nie może
+blokować ramek. Jeśli w odpowiedziach pojawia się `X-Frame-Options: SAMEORIGIN`
+albo podobne:
+
+- w Cloudflare dla hosta mapy dodaj **Response Header Transform Rule**: usuń
+  `X-Frame-Options` i ustaw
   `Content-Security-Policy: frame-ancestors 'self' https://klocki-time.alleria.pl`,
 - **albo** ustaw `VITE_MAP_EMBED=false` — sekcja mapy stanie się kartą z
   przyciskiem „Otwórz mapę".
+
+### `"local"` — BlueMap serwowany z tego samego kontenera, zawsze dostępny
+
+Zamiast iframe'ować zewnętrzny host, **BlueMap CLI** (`-w`, tryb tylko-webserver)
+działa jako drugi proces w tym samym kontenerze co strona i czyta gotowe
+kafelki bezpośrednio z bazy SQL, do której renderuje plugin BlueMap na
+serwerze MC. Efekt: mapa działa **cały czas**, niezależnie od tego, czy serwer
+śpi czy jest offline — bo nie zależy od żyjącego serwera, tylko od tego, co już
+zostało wyrenderowane do bazy.
+
+nginx wystawia to pod `/map` (proxy do procesu BlueMapa na `127.0.0.1:8100`
+wewnątrz kontenera) — czyli `https://klocki-time.alleria.pl/map` to pełna,
+samodzielna aplikacja BlueMapa (bez chrome'u strony), a panel mapy na stronie
+głównej ją iframe'uje z tego samego originu, więc `X-Frame-Options` przestaje
+mieć znaczenie.
+
+**Wymagane po stronie serwera Minecraft** (`config/bluemap/` w plikach
+serwera, przez panel/SFTP):
+
+1. `storages/sql.conf` — `storage-type: sql`, `connection-url` do tej samej
+   bazy MySQL/MariaDB co niżej (`jdbc:mysql://host:port/baza?permitMysqlScheme`).
+2. w każdym `maps/<world>.conf` — `storage: "sql"` zamiast `"file"`.
+3. `webserver.conf` — `enabled: false` (serwuje teraz kontener strony, nie
+   serwer MC).
+4. `core.conf` — `accept-download: true` (wymóg BlueMapa, EULA Mojanga).
+5. w konsoli serwera: `/bluemap reload`, potem `/bluemap force-update <mapa>`
+   dla każdej mapy — jednorazowy pełny render do bazy.
+
+**Po stronie tego repo** — zmienne w `.env` (patrz `BLUEMAP_*` w
+[`.env.example`](.env.example)): `BLUEMAP_ENABLED=true`, `BLUEMAP_DB_HOST/PORT/NAME/USER/PASSWORD`
+(te same co w `sql.conf` na serwerze MC), plus `VITE_MAP_MODE=local`. Te
+`BLUEMAP_*` zmienne **nie trafiają do obrazu** — czytane są przy starcie
+kontenera (`docker-entrypoint.sh` generuje z nich `sql.conf` dla BlueMapa),
+więc zmiana hasła/hosta to tylko restart kontenera, bez rebuildu.
+
+⚠️ Jar BlueMap CLI w obrazie (`BLUEMAP_CLI_URL` build-arg) musi być z **tego
+samego wydania** co plugin na serwerze MC, inaczej format danych w bazie może
+się nie zgadzać. Domyślnie `v5.12` (Forge 1.20.1). Dla Fabric 1.20.1 (BlueMap
+5.3): `--build-arg BLUEMAP_CLI_URL=https://github.com/BlueMap-Minecraft/BlueMap/releases/download/v5.3/bluemap-5.3-cli.jar`
+(albo `BLUEMAP_CLI_URL` w `.env`, skoro to build-arg czytany przez compose).
 
 ## Deploy
 
@@ -156,17 +200,22 @@ Port hosta zmienisz zmienną `HOST_PORT` (też w `.env` lub jako
 przebudować obraz (`--build`) — zmienne `VITE_*` są zaszywane w trakcie
 `docker build`, tak jak przy zwykłym `npm run build`.
 
-Bez Compose — czysty `docker build`/`run` (zmienne trzeba przekazać ręcznie
-przez `--build-arg`, tyle ile ich jest w [`Dockerfile`](Dockerfile)):
+Bez Compose — czysty `docker build`/`run` (build-argi z [`Dockerfile`](Dockerfile)
+dla `VITE_*`/`BLUEMAP_CLI_URL`; `BLUEMAP_*` z sekretami idą jako `-e` przy
+`docker run`, nie `--build-arg`, bo czyta je entrypoint przy starcie, nie build):
 
 ```bash
 docker build -t klocki-landing --build-arg VITE_SERVER_ADDRESS=klocki-time.alleria.pl .
-docker run -d -p 8080:80 --name klocki-landing klocki-landing
+docker run -d -p 8080:80 --name klocki-landing \
+  -e BLUEMAP_ENABLED=true -e BLUEMAP_DB_HOST=... -e BLUEMAP_DB_PASSWORD=... \
+  klocki-landing
 ```
 
 ## Struktura
 
 ```
+docker-entrypoint.sh   startuje nginx + (opcjonalnie) BlueMap CLI w jednym kontenerze
+bluemap/config/         szablony configów CLI-owego BlueMapa (webserver-only, storage: sql)
 src/
   config.ts            odczyt .env + merge z /config.json
   lib/
