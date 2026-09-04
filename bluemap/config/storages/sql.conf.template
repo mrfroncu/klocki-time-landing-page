@@ -2,7 +2,7 @@
 # kontenera (podstawia zmienne środowiskowe BLUEMAP_DB_*) — realne dane
 # logowania NIE są zaszyte w obrazie, tylko w .env / środowisku kontenera.
 storage-type: sql
-connection-url: "jdbc:mysql://__BLUEMAP_DB_HOST__:__BLUEMAP_DB_PORT__/__BLUEMAP_DB_NAME__?permitMysqlScheme"
+connection-url: "jdbc:mysql://__BLUEMAP_DB_HOST__:__BLUEMAP_DB_PORT__/__BLUEMAP_DB_NAME__?permitMysqlScheme&allowPublicKeyRetrieval=true"
 connection-properties: {
   user: "__BLUEMAP_DB_USER__"
   password: "__BLUEMAP_DB_PASSWORD__"
