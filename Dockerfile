@@ -32,7 +32,7 @@ FROM nginx:1.27-alpine AS runtime
 
 # bash — potrzebny przez docker-entrypoint.sh (wait -n); openjdk21 — BlueMap
 # CLI 5.12 wymaga Java 21.
-RUN apk add --no-cache bash curl jq openjdk21-jre-headless
+RUN apk add --no-cache bash openjdk21-jre-headless
 
 # Strona
 COPY nginx.conf /etc/nginx/conf.d/default.conf

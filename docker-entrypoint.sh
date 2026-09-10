@@ -20,25 +20,19 @@ term_handler() {
 }
 trap term_handler TERM INT
 
-# Ustawienia bazy mogą przyjść z panelu zamiast z .env tego hosta. Idą po
-# HTTPS, serwer do serwera, na uwierzytelnione żądanie - nigdy do przeglądarki.
-# Bez tokenu (albo gdy panel nie odpowiada) zostaje to, co jest w środowisku.
-BLUEMAP_CONFIG_URL="${BLUEMAP_CONFIG_URL:-}"
-BLUEMAP_CONFIG_TOKEN="${BLUEMAP_CONFIG_TOKEN:-}"
-if [ -n "$BLUEMAP_CONFIG_URL" ] && [ -n "$BLUEMAP_CONFIG_TOKEN" ]; then
-  echo "[entrypoint] BlueMap: pobieram ustawienia z panelu…"
-  if remote="$(curl -fsS --max-time 15 -H "Authorization: Bearer ${BLUEMAP_CONFIG_TOKEN}" "$BLUEMAP_CONFIG_URL")"; then
-    field() { printf '%s' "$remote" | jq -r --arg k "$1" '.[$k] // empty'; }
-    [ -n "$(field enabled)" ] && BLUEMAP_ENABLED="$(field enabled)"
-    [ -n "$(field host)" ] && BLUEMAP_DB_HOST="$(field host)"
-    [ -n "$(field port)" ] && BLUEMAP_DB_PORT="$(field port)"
-    [ -n "$(field database)" ] && BLUEMAP_DB_NAME="$(field database)"
-    [ -n "$(field user)" ] && BLUEMAP_DB_USER="$(field user)"
-    [ -n "$(field password)" ] && BLUEMAP_DB_PASSWORD="$(field password)"
-    echo "[entrypoint] BlueMap: ustawienia z panelu wczytane (host ${BLUEMAP_DB_HOST:-?}, baza ${BLUEMAP_DB_NAME:-?})"
-  else
-    echo "[entrypoint] BlueMap: panel nie odpowiedział - zostaję przy ustawieniach z .env"
-  fi
+# Ustawienia bazy mogą przyjść z panelu. Panel zapisuje je przez agenta
+# magazynu do pliku na tym hoście, który montujemy tylko do odczytu - nic ich
+# nigdzie nie wystawia i kontener nie musi po nie nigdzie sięgać. Bez pliku
+# zostaje to, co jest w środowisku.
+BLUEMAP_ENV_FILE="${BLUEMAP_ENV_FILE:-/run/landing-secrets/bluemap.env}"
+if [ -r "$BLUEMAP_ENV_FILE" ]; then
+  echo "[entrypoint] BlueMap: wczytuję ustawienia z ${BLUEMAP_ENV_FILE}"
+  set -a
+  # shellcheck disable=SC1090
+  . "$BLUEMAP_ENV_FILE"
+  set +a
+else
+  echo "[entrypoint] BlueMap: brak ${BLUEMAP_ENV_FILE} - używam ustawień ze środowiska"
 fi
 
 if [ "$BLUEMAP_ENABLED" = "true" ]; then
