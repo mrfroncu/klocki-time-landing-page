@@ -32,7 +32,7 @@ FROM nginx:1.27-alpine AS runtime
 
 # bash — potrzebny przez docker-entrypoint.sh (wait -n); openjdk21 — BlueMap
 # CLI 5.12 wymaga Java 21.
-RUN apk add --no-cache bash openjdk21-jre-headless
+RUN apk add --no-cache bash curl jq openjdk21-jre-headless
 
 # Strona
 COPY nginx.conf /etc/nginx/conf.d/default.conf
@@ -51,6 +51,12 @@ ADD ${BLUEMAP_CLI_URL} /opt/bluemap/bluemap-cli.jar
 # classpath ręcznie w docker-entrypoint.sh (java -cp zamiast -jar).
 ARG MARIADB_JDBC_URL=https://repo1.maven.org/maven2/org/mariadb/jdbc/mariadb-java-client/3.5.10/mariadb-java-client-3.5.10.jar
 ADD ${MARIADB_JDBC_URL} /opt/bluemap/mariadb-java-client.jar
+# Sterownik MariaDB nie umie uwierzytelnienia sha256_password / caching_sha2_password,
+# którego domyślnie używa MySQL 8 - kończy się to "Client does not support
+# authentication protocol requested by server". Connector/J od MySQL-a umie oba,
+# więc leży obok i oba są na classpathie; JDBC wybiera właściwy po adresie.
+ARG MYSQL_JDBC_URL=https://repo1.maven.org/maven2/com/mysql/mysql-connector-j/9.1.0/mysql-connector-j-9.1.0.jar
+ADD ${MYSQL_JDBC_URL} /opt/bluemap/mysql-connector-j.jar
 
 COPY bluemap/config /opt/bluemap/config
 

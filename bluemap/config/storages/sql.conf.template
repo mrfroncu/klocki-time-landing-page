@@ -2,7 +2,13 @@
 # kontenera (podstawia zmienne środowiskowe BLUEMAP_DB_*) — realne dane
 # logowania NIE są zaszyte w obrazie, tylko w .env / środowisku kontenera.
 storage-type: sql
-connection-url: "jdbc:mysql://__BLUEMAP_DB_HOST__:__BLUEMAP_DB_PORT__/__BLUEMAP_DB_NAME__?permitMysqlScheme&allowPublicKeyRetrieval=true"
+# Bez "permitMysqlScheme": z tym parametrem sterownik MariaDB przejmuje adresy
+# jdbc:mysql:// i przewraca się na uwierzytelnieniu sha256_password, którego
+# MySQL 8 używa domyślnie. Bez niego adres bierze Connector/J od MySQL-a, który
+# je obsługuje. Oba sterowniki są na classpathie, adres decyduje który zadziała.
+# allowPublicKeyRetrieval jest potrzebne, żeby caching_sha2_password działało
+# na połączeniu bez TLS-a.
+connection-url: "jdbc:mysql://__BLUEMAP_DB_HOST__:__BLUEMAP_DB_PORT__/__BLUEMAP_DB_NAME__?allowPublicKeyRetrieval=true&sslMode=PREFERRED"
 connection-properties: {
   user: "__BLUEMAP_DB_USER__"
   password: "__BLUEMAP_DB_PASSWORD__"

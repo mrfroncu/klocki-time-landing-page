@@ -37,4 +37,8 @@ services:
       BLUEMAP_DB_USER: ${BLUEMAP_DB_USER:-}
       BLUEMAP_DB_PASSWORD: ${BLUEMAP_DB_PASSWORD:-}
       BLUEMAP_JAVA_MAX_MEM: ${BLUEMAP_JAVA_MAX_MEM:-256M}
+      # Ustawienia bazy BlueMapa z panelu (opcjonalne). Gdy oba ustawione,
+      # wygrywają nad BLUEMAP_DB_* powyżej.
+      BLUEMAP_CONFIG_URL: ${BLUEMAP_CONFIG_URL:-}
+      BLUEMAP_CONFIG_TOKEN: ${BLUEMAP_CONFIG_TOKEN:-}
       CONFIG_JSON_URL: ${CONFIG_JSON_URL:-}
