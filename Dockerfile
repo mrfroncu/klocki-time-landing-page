@@ -28,7 +28,7 @@ COPY . .
 RUN npm run build
 
 # ── runtime (nginx + BlueMap CLI w jednym kontenerze) ──────────────────
-FROM nginx:1.27-alpine AS runtime
+FROM nginx:alpine AS runtime
 
 # bash — potrzebny przez docker-entrypoint.sh (wait -n); openjdk21 — BlueMap
 # CLI 5.12 wymaga Java 21.
@@ -64,6 +64,6 @@ COPY docker-entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
 
 EXPOSE 80
-HEALTHCHECK --interval=30s --timeout=3s CMD wget -qO- http://localhost/ >/dev/null || exit 1
+HEALTHCHECK --interval=30s --timeout=3s CMD wget -qO- http://127.0.0.1/ >/dev/null || exit 1
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
