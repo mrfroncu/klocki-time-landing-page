@@ -34,6 +34,16 @@ FROM nginx:alpine AS runtime
 # CLI 5.12 wymaga Java 21.
 RUN apk add --no-cache bash openjdk21-jre-headless
 
+# CVE-2026-91403: osiem przejętych certyfikatów pośrednich eMudhra (każdy też
+# z podpisem krzyżowym Sectigo) Java nadal uznaje. blocked.certs to lista
+# odrzucanych certyfikatów samego JDK; 16 odcisków pochodzi z
+# https://emudhra.we-have-a-problem.com/impacted-intermediates.json.
+# Dopisane, więc własne wpisy JDK zostają. Po poprawce w Javie nie szkodzi.
+COPY emudhra-blocked.certs /tmp/emudhra-blocked.certs
+RUN J="$(dirname "$(dirname "$(readlink -f "$(command -v java)")")")" \
+ && { echo; cat /tmp/emudhra-blocked.certs; } >> "$J/lib/security/blocked.certs" \
+ && rm /tmp/emudhra-blocked.certs
+
 # Strona
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /app/dist /usr/share/nginx/html
